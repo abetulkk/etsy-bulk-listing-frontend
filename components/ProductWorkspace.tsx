@@ -173,6 +173,11 @@ export default function ProductWorkspace() {
         setCurrentProductId(productId)
       }
       
+      // TypeScript için null kontrolü
+      if (!productId) {
+        throw new Error("Product ID is required")
+      }
+      
       await generateApi.generateAll({
         productId,
         mainImageUrl: productData.mainImage,
