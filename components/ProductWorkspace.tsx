@@ -15,7 +15,7 @@ import {
   AlertCircle, 
   Loader2,
   FileDown,
-  Store,
+  Store as StoreIcon,
   Zap,
   Image as ImageIcon,
   FileText,
@@ -436,7 +436,7 @@ export default function ProductWorkspace() {
         {stores.length > 0 && (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold gradient-text font-poppins flex items-center gap-2">
-              <Store className="h-6 w-6" />
+              <StoreIcon className="h-6 w-6" />
               Mağaza Çıktıları
             </h2>
             
