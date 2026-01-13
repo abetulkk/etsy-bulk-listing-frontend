@@ -7,9 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Plus, Trash2, Edit2, X, Check, AlertCircle, Store as StoreIcon } from "lucide-react"
+import { Plus, Trash2, Edit2, X, Check, AlertCircle, Store as StoreIcon, Download, FileDown } from "lucide-react"
 import { Store } from "@/types"
-import { storesApi, checkBackendHealth } from "@/lib/api"
+import { storesApi, checkBackendHealth, exportApi } from "@/lib/api"
 
 export default function StoresPage() {
   const [stores, setStores] = useState<Store[]>([])
@@ -105,6 +105,37 @@ export default function StoresPage() {
     }
   }
 
+  const handleExportStore = async (storeId: string) => {
+    try {
+      const blob = await exportApi.exportStore(storeId, "csv")
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      const store = stores.find(s => s.id === storeId)
+      link.download = `${store?.name.replace(/\s+/g, "_") || storeId}-export.csv`
+      link.click()
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error("Export error:", error)
+      alert("Export işlemi başarısız!")
+    }
+  }
+
+  const handleExportAll = async () => {
+    try {
+      const blob = await exportApi.exportAll("csv")
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = `all-stores-export.csv`
+      link.click()
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error("Export error:", error)
+      alert("Export işlemi başarısız!")
+    }
+  }
+
   const conceptOptions = [
     { value: "", label: "Seçiniz..." },
     { value: "Boho", label: "Boho" },
@@ -120,7 +151,7 @@ export default function StoresPage() {
   ]
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header />
@@ -130,64 +161,82 @@ export default function StoresPage() {
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto p-6">
-            <div className="mx-auto max-w-5xl space-y-6">
+            <div className="mx-auto max-w-6xl space-y-6">
               {/* Backend Status */}
               {backendOnline === false && (
-                <div className="flex items-center gap-3 rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-                  <AlertCircle className="h-5 w-5 text-destructive" />
+                <div className="glass rounded-xl border border-red-500/50 bg-red-500/10 p-4 flex items-center gap-3">
+                  <AlertCircle className="h-5 w-5 text-red-500" />
                   <div>
-                    <p className="font-medium text-destructive">Backend servisi çalışmıyor</p>
-                    <p className="text-sm text-muted-foreground">
-                      Backend klasöründe <code className="rounded bg-muted px-1.5 py-0.5 text-xs">make up</code> komutunu çalıştırın
+                    <p className="font-semibold text-red-700 dark:text-red-400">Backend servisi çalışmıyor</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Backend klasöründe <code className="rounded bg-gray-200 dark:bg-gray-800 px-1.5 py-0.5 text-xs">make up</code> komutunu çalıştırın
                     </p>
                   </div>
                 </div>
               )}
 
               {/* Header */}
-              <div>
-                <h1 className="text-2xl font-semibold tracking-tight">Mağazalar</h1>
-                <p className="text-muted-foreground">Mağazalarınızı ekleyin ve yönetin</p>
+              <div className="glass-strong rounded-2xl p-6 border border-white/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h1 className="text-3xl font-bold gradient-text font-poppins mb-2">Mağazalar</h1>
+                    <p className="text-gray-600 dark:text-gray-400">Mağazalarınızı ekleyin, yönetin ve export edin</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {stores.length > 0 && (
+                      <Button
+                        onClick={handleExportAll}
+                        variant="outline"
+                        className="glass border-white/20"
+                      >
+                        <FileDown className="mr-2 h-4 w-4" />
+                        Tümünü Export
+                      </Button>
+                    )}
+                    <Button 
+                      onClick={() => setIsAdding(true)}
+                      disabled={!backendOnline || isAdding}
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Yeni Mağaza
+                    </Button>
+                  </div>
+                </div>
               </div>
 
               {/* Stores Table */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                  <div>
-                    <CardTitle className="text-base font-medium">Mağaza Listesi</CardTitle>
-                    <CardDescription>{stores.length} mağaza</CardDescription>
+              <Card className="glass-strong border-white/20 overflow-hidden">
+                <CardHeader className="bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-indigo-500/10 border-b border-white/20">
+                  <div className="flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle className="text-lg font-bold font-poppins">Mağaza Listesi</CardTitle>
+                      <CardDescription className="mt-1">{stores.length} mağaza</CardDescription>
+                    </div>
                   </div>
-                  <Button 
-                    size="sm"
-                    onClick={() => setIsAdding(true)}
-                    disabled={!backendOnline || isAdding}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Yeni Mağaza
-                  </Button>
                 </CardHeader>
                 <CardContent className="p-0">
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead>Mağaza Adı</TableHead>
-                        <TableHead>Konsept</TableHead>
-                        <TableHead className="text-center">Görsel</TableHead>
-                        <TableHead className="text-center">Infografik</TableHead>
-                        <TableHead className="text-center">Video</TableHead>
-                        <TableHead className="w-[100px]"></TableHead>
+                      <TableRow className="bg-white/50 dark:bg-gray-900/50">
+                        <TableHead className="font-semibold">Mağaza Adı</TableHead>
+                        <TableHead className="font-semibold">Konsept</TableHead>
+                        <TableHead className="text-center font-semibold">Görsel</TableHead>
+                        <TableHead className="text-center font-semibold">Infografik</TableHead>
+                        <TableHead className="text-center font-semibold">Video</TableHead>
+                        <TableHead className="w-[150px] font-semibold">İşlemler</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {/* Add New Row */}
                       {isAdding && (
-                        <TableRow>
+                        <TableRow className="bg-purple-50/50 dark:bg-purple-900/10">
                           <TableCell>
                             <Input
                               value={newStore.name}
                               onChange={(e) => setNewStore(prev => ({ ...prev, name: e.target.value }))}
                               placeholder="Mağaza adı"
-                              className="h-8"
+                              className="h-9 glass border-white/20"
                               autoFocus
                             />
                           </TableCell>
@@ -195,7 +244,7 @@ export default function StoresPage() {
                             <select
                               value={newStore.concept}
                               onChange={(e) => setNewStore(prev => ({ ...prev, concept: e.target.value }))}
-                              className="h-8 w-full rounded-md border border-input bg-background px-3 text-sm"
+                              className="h-9 w-full rounded-lg glass border border-white/20 bg-background px-3 text-sm"
                             >
                               {conceptOptions.map(opt => (
                                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -209,7 +258,7 @@ export default function StoresPage() {
                               max={10}
                               value={newStore.imageCount}
                               onChange={(e) => setNewStore(prev => ({ ...prev, imageCount: parseInt(e.target.value) || 1 }))}
-                              className="h-8 w-16 mx-auto text-center"
+                              className="h-9 w-16 mx-auto text-center glass border-white/20"
                             />
                           </TableCell>
                           <TableCell className="text-center text-muted-foreground">—</TableCell>
@@ -219,7 +268,12 @@ export default function StoresPage() {
                               <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setIsAdding(false)}>
                                 <X className="h-4 w-4" />
                               </Button>
-                              <Button size="icon" className="h-8 w-8" onClick={addStore} disabled={!newStore.name.trim()}>
+                              <Button 
+                                size="icon" 
+                                className="h-8 w-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700" 
+                                onClick={addStore} 
+                                disabled={!newStore.name.trim()}
+                              >
                                 <Check className="h-4 w-4" />
                               </Button>
                             </div>
@@ -229,21 +283,21 @@ export default function StoresPage() {
 
                       {/* Store Rows */}
                       {stores.map((store) => (
-                        <TableRow key={store.id}>
+                        <TableRow key={store.id} className="hover:bg-white/30 dark:hover:bg-gray-800/30 transition-colors">
                           {editingId === store.id ? (
                             <>
                               <TableCell>
                                 <Input
                                   value={editForm.name || ""}
                                   onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                                  className="h-8"
+                                  className="h-9 glass border-white/20"
                                 />
                               </TableCell>
                               <TableCell>
                                 <select
                                   value={editForm.concept || ""}
                                   onChange={(e) => setEditForm(prev => ({ ...prev, concept: e.target.value }))}
-                                  className="h-8 w-full rounded-md border border-input bg-background px-3 text-sm"
+                                  className="h-9 w-full rounded-lg glass border border-white/20 bg-background px-3 text-sm"
                                 >
                                   {conceptOptions.map(opt => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -257,7 +311,7 @@ export default function StoresPage() {
                                   max={10}
                                   value={editForm.imageCount || 1}
                                   onChange={(e) => setEditForm(prev => ({ ...prev, imageCount: parseInt(e.target.value) || 1 }))}
-                                  className="h-8 w-16 mx-auto text-center"
+                                  className="h-9 w-16 mx-auto text-center glass border-white/20"
                                 />
                               </TableCell>
                               <TableCell className="text-center">
@@ -265,7 +319,7 @@ export default function StoresPage() {
                                   type="checkbox"
                                   checked={editForm.hasInfographic || false}
                                   onChange={(e) => setEditForm(prev => ({ ...prev, hasInfographic: e.target.checked }))}
-                                  className="h-4 w-4 rounded border-input"
+                                  className="h-4 w-4 rounded border-input accent-purple-600"
                                 />
                               </TableCell>
                               <TableCell className="text-center">
@@ -273,7 +327,7 @@ export default function StoresPage() {
                                   type="checkbox"
                                   checked={editForm.hasVideo || false}
                                   onChange={(e) => setEditForm(prev => ({ ...prev, hasVideo: e.target.checked }))}
-                                  className="h-4 w-4 rounded border-input"
+                                  className="h-4 w-4 rounded border-input accent-purple-600"
                                 />
                               </TableCell>
                               <TableCell>
@@ -281,7 +335,11 @@ export default function StoresPage() {
                                   <Button size="icon" variant="ghost" className="h-8 w-8" onClick={cancelEdit}>
                                     <X className="h-4 w-4" />
                                   </Button>
-                                  <Button size="icon" className="h-8 w-8" onClick={saveEdit}>
+                                  <Button 
+                                    size="icon" 
+                                    className="h-8 w-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700" 
+                                    onClick={saveEdit}
+                                  >
                                     <Check className="h-4 w-4" />
                                   </Button>
                                 </div>
@@ -289,33 +347,57 @@ export default function StoresPage() {
                             </>
                           ) : (
                             <>
-                              <TableCell className="font-medium">{store.name}</TableCell>
+                              <TableCell className="font-semibold">{store.name}</TableCell>
                               <TableCell>
                                 {store.concept ? (
-                                  <span className="inline-flex items-center rounded-md bg-secondary px-2 py-1 text-xs font-medium">
+                                  <span className="inline-flex items-center rounded-lg bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 px-3 py-1 text-xs font-semibold text-purple-700 dark:text-purple-300 border border-purple-200/50 dark:border-purple-700/50">
                                     {store.concept}
                                   </span>
                                 ) : (
                                   <span className="text-muted-foreground">—</span>
                                 )}
                               </TableCell>
-                              <TableCell className="text-center">{store.imageCount}</TableCell>
+                              <TableCell className="text-center font-medium">{store.imageCount}</TableCell>
                               <TableCell className="text-center">
-                                {store.hasInfographic ? "✓" : "—"}
+                                {store.hasInfographic ? (
+                                  <span className="text-emerald-600 font-semibold">✓</span>
+                                ) : (
+                                  <span className="text-muted-foreground">—</span>
+                                )}
                               </TableCell>
                               <TableCell className="text-center">
-                                {store.hasVideo ? "✓" : "—"}
+                                {store.hasVideo ? (
+                                  <span className="text-emerald-600 font-semibold">✓</span>
+                                ) : (
+                                  <span className="text-muted-foreground">—</span>
+                                )}
                               </TableCell>
                               <TableCell>
                                 <div className="flex justify-end gap-1">
-                                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => startEdit(store)}>
+                                  <Button 
+                                    size="icon" 
+                                    variant="ghost" 
+                                    className="h-8 w-8 hover:bg-purple-100 dark:hover:bg-purple-900/30" 
+                                    onClick={() => handleExportStore(store.id)}
+                                    title="Export"
+                                  >
+                                    <Download className="h-4 w-4" />
+                                  </Button>
+                                  <Button 
+                                    size="icon" 
+                                    variant="ghost" 
+                                    className="h-8 w-8 hover:bg-purple-100 dark:hover:bg-purple-900/30" 
+                                    onClick={() => startEdit(store)}
+                                    title="Düzenle"
+                                  >
                                     <Edit2 className="h-4 w-4" />
                                   </Button>
                                   <Button 
                                     size="icon" 
                                     variant="ghost" 
-                                    className="h-8 w-8 text-destructive hover:text-destructive" 
+                                    className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30" 
                                     onClick={() => deleteStore(store.id)}
+                                    title="Sil"
                                   >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
@@ -329,14 +411,26 @@ export default function StoresPage() {
                       {/* Empty State */}
                       {stores.length === 0 && !isAdding && (
                         <TableRow>
-                          <TableCell colSpan={6} className="h-32 text-center">
-                            <div className="flex flex-col items-center justify-center gap-2">
-                              <StoreIcon className="h-8 w-8 text-muted-foreground/50" />
-                              <p className="text-sm text-muted-foreground">Henüz mağaza eklenmemiş</p>
-                              <Button size="sm" variant="outline" onClick={() => setIsAdding(true)} disabled={!backendOnline}>
-                                <Plus className="mr-2 h-4 w-4" />
-                                İlk Mağazanızı Ekleyin
-                              </Button>
+                          <TableCell colSpan={6} className="h-64 text-center">
+                            <div className="flex flex-col items-center justify-center gap-4">
+                              <div className="relative">
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-indigo-500/20 blur-2xl" />
+                                <StoreIcon className="relative h-16 w-16 text-purple-500/50" />
+                              </div>
+                              <div>
+                                <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">Henüz mağaza eklenmemiş</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">İlk mağazanızı ekleyerek başlayın</p>
+                                <Button 
+                                  size="lg" 
+                                  variant="outline" 
+                                  onClick={() => setIsAdding(true)} 
+                                  disabled={!backendOnline}
+                                  className="glass border-white/20 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                                >
+                                  <Plus className="mr-2 h-4 w-4" />
+                                  İlk Mağazanızı Ekleyin
+                                </Button>
+                              </div>
                             </div>
                           </TableCell>
                         </TableRow>

@@ -213,6 +213,27 @@ export const uploadApi = {
   },
 }
 
+// Export API
+export const exportApi = {
+  exportProduct: async (productId: string, format: "json" | "csv" = "csv"): Promise<Blob> => {
+    const res = await fetch(`${API_URL}/api/export/product/${productId}?format=${format}`)
+    if (!res.ok) throw new Error("Failed to export product")
+    return res.blob()
+  },
+
+  exportStore: async (storeId: string, format: "json" | "csv" = "csv"): Promise<Blob> => {
+    const res = await fetch(`${API_URL}/api/export/store/${storeId}?format=${format}`)
+    if (!res.ok) throw new Error("Failed to export store")
+    return res.blob()
+  },
+
+  exportAll: async (format: "json" | "csv" = "csv"): Promise<Blob> => {
+    const res = await fetch(`${API_URL}/api/export/all?format=${format}`)
+    if (!res.ok) throw new Error("Failed to export all")
+    return res.blob()
+  },
+}
+
 // Health check
 export const checkBackendHealth = async (): Promise<boolean> => {
   try {
