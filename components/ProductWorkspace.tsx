@@ -49,32 +49,9 @@ export default function ProductWorkspace() {
       
       if (isOnline) {
         try {
+          // Sadece mağaza listesini yükle, eski ürün verilerini yükleme
           const storeList = await storesApi.getAll()
           setStores(storeList)
-          
-          const products = await productsApi.getAll()
-          if (products.length > 0) {
-            const lastProduct = products[0]
-            setCurrentProductId(lastProduct.id)
-            
-            if (lastProduct.mainImageUrl) {
-              const storesData: Record<string, StoreContent> = {}
-              lastProduct.stores?.forEach((sp: any) => {
-                storesData[sp.storeId] = {
-                  title: sp.title || "",
-                  description: sp.description || "",
-                  tags: sp.tags || [],
-                  images: sp.images || [],
-                }
-              })
-              
-              setProductData({
-                mainImage: lastProduct.mainImageUrl,
-                infographicCount: lastProduct.infographicCount || 0,
-                stores: storesData,
-              })
-            }
-          }
         } catch (error) {
           console.error("Error loading data:", error)
         }

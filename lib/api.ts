@@ -26,7 +26,7 @@ export const storesApi = {
 
   update: async (id: string, data: any) => {
     const res = await fetch(`${API_URL}/api/stores/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     })
@@ -47,13 +47,29 @@ export const productsApi = {
   getAll: async () => {
     const res = await fetch(`${API_URL}/api/products`)
     if (!res.ok) throw new Error("Failed to fetch products")
-    return res.json()
+    const products = await res.json()
+    // Backend storeProducts döndürüyor, frontend stores bekliyor - dönüştür
+    return products.map((p: any) => ({
+      ...p,
+      stores: (p.storeProducts || []).map((sp: any) => ({
+        ...sp,
+        storeId: sp.storeId || sp.store?.id,
+      })),
+    }))
   },
 
   getById: async (id: string) => {
     const res = await fetch(`${API_URL}/api/products/${id}`)
     if (!res.ok) throw new Error("Failed to fetch product")
-    return res.json()
+    const product = await res.json()
+    // Backend storeProducts döndürüyor, frontend stores bekliyor - dönüştür
+    return {
+      ...product,
+      stores: (product.storeProducts || []).map((sp: any) => ({
+        ...sp,
+        storeId: sp.storeId || sp.store?.id,
+      })),
+    }
   },
 
   create: async (data: any) => {
@@ -68,7 +84,7 @@ export const productsApi = {
 
   update: async (id: string, data: any) => {
     const res = await fetch(`${API_URL}/api/products/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     })
@@ -82,18 +98,39 @@ export const productsApi = {
     })
     if (!res.ok) throw new Error("Failed to delete product")
   },
+}
 
-  getStoreContent: async (productId: string, storeId: string) => {
-    const res = await fetch(`${API_URL}/api/products/${productId}/stores/${storeId}`)
-    if (!res.ok) throw new Error("Failed to fetch store content")
+// Store Products API
+export const storeProductsApi = {
+  getAll: async (params?: { storeId?: string; productId?: string }) => {
+    const searchParams = new URLSearchParams()
+    if (params?.storeId) searchParams.set("storeId", params.storeId)
+    if (params?.productId) searchParams.set("productId", params.productId)
+    
+    const res = await fetch(`${API_URL}/api/store-products?${searchParams}`)
+    if (!res.ok) throw new Error("Failed to fetch store products")
     return res.json()
+  },
+
+  getById: async (id: string) => {
+    const res = await fetch(`${API_URL}/api/store-products/${id}`)
+    if (!res.ok) throw new Error("Failed to fetch store product")
+    return res.json()
+  },
+
+  getByStoreAndProduct: async (storeId: string, productId: string) => {
+    const res = await fetch(`${API_URL}/api/store-products?storeId=${storeId}&productId=${productId}`)
+    if (!res.ok) throw new Error("Failed to fetch store product")
+    const data = await res.json()
+    return data[0] || null
   },
 }
 
 // Templates API
 export const templatesApi = {
-  getAll: async () => {
-    const res = await fetch(`${API_URL}/api/templates`)
+  getAll: async (type?: string) => {
+    const searchParams = type ? `?type=${type}` : ''
+    const res = await fetch(`${API_URL}/api/templates${searchParams}`)
     if (!res.ok) throw new Error("Failed to fetch templates")
     return res.json()
   },
@@ -116,7 +153,7 @@ export const templatesApi = {
 
   update: async (id: string, data: any) => {
     const res = await fetch(`${API_URL}/api/templates/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     })
@@ -154,7 +191,7 @@ export const generateApi = {
     return res.json()
   },
 
-  generateContent: async (data: { storeId: string; productId: string; productDescription?: string }) => {
+  generateContent: async (data: { storeId: string; productId: string; productDescription?: string; mainImageUrl?: string }) => {
     const res = await fetch(`${API_URL}/api/generate/content`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -164,7 +201,7 @@ export const generateApi = {
     return res.json()
   },
 
-  generateImage: async (data: { storeId: string; productId: string; prompt?: string; referenceImageUrl?: string }) => {
+  generateImage: async (data: { storeId: string; productId: string; prompt?: string; imageUrls: string[] }) => {
     const res = await fetch(`${API_URL}/api/generate/image`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -180,33 +217,21 @@ export const generateApi = {
     return res.json()
   },
 
-  getTasks: async (params?: { status?: string; type?: string; limit?: number }) => {
-    const searchParams = new URLSearchParams()
-    if (params?.status) searchParams.set("status", params.status)
-    if (params?.type) searchParams.set("type", params.type)
-    if (params?.limit) searchParams.set("limit", params.limit.toString())
-    
-    const res = await fetch(`${API_URL}/api/generate/tasks?${searchParams}`)
-    if (!res.ok) throw new Error("Failed to fetch tasks")
-    return res.json()
+  getTasks: async (params?: { limit?: number }) => {
+    // Backend'de ayrı bir tasks endpoint'i yok, boş array döndür
+    return []
   },
 }
 
 // Upload API
 export const uploadApi = {
-  upload: async (file: File): Promise<{ url: string; filename: string }> => {
-    // Dosyayı base64'e çevir
-    const base64 = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve(reader.result as string)
-      reader.onerror = reject
-      reader.readAsDataURL(file)
-    })
+  upload: async (file: File): Promise<{ url: string; id: string; filename: string; mimetype: string; size: number }> => {
+    const formData = new FormData()
+    formData.append("file", file)
 
     const res = await fetch(`${API_URL}/api/upload`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ file: base64, filename: file.name }),
+      body: formData,
     })
     if (!res.ok) throw new Error("Failed to upload file")
     return res.json()
@@ -237,7 +262,7 @@ export const exportApi = {
 // Health check
 export const checkBackendHealth = async (): Promise<boolean> => {
   try {
-    const res = await fetch(`${API_URL}/health`)
+    const res = await fetch(`${API_URL}/api/stores`)
     return res.ok
   } catch {
     return false

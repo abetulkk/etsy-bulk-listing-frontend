@@ -102,18 +102,25 @@ export default function ImageUpload({ label, value, onChange, onRemove }: ImageU
               {isUploading ? "Yükleniyor..." : isDragging ? "Bırakın" : "Görsel sürükleyin"}
             </p>
             <p className="text-xs text-muted-foreground mb-3">veya</p>
-            <label className="cursor-pointer">
-              <Button size="sm" variant="outline" asChild disabled={isUploading}>
-                <span>Dosya Seç</span>
-              </Button>
+            <div>
               <input
                 type="file"
                 accept="image/*"
                 className="hidden"
+                id="file-upload"
                 onChange={handleFileInput}
                 disabled={isUploading}
               />
-            </label>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                disabled={isUploading}
+                onClick={() => document.getElementById('file-upload')?.click()}
+                type="button"
+              >
+                Dosya Seç
+              </Button>
+            </div>
             <p className="mt-3 text-xs text-muted-foreground">
               PNG, JPG, WEBP - max 10MB
             </p>

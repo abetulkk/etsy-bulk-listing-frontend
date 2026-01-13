@@ -6,7 +6,7 @@ import Header from "@/components/Header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { History as HistoryIcon, Package, Clock, CheckCircle2, AlertCircle, Trash2, Image as ImageIcon, X, Eye, Download } from "lucide-react"
-import { productsApi, storesApi, generateApi, checkBackendHealth } from "@/lib/api"
+import { productsApi, storesApi, checkBackendHealth } from "@/lib/api"
 
 interface ProductWithStores {
   id: string
@@ -26,7 +26,6 @@ interface ProductWithStores {
 export default function HistoryPage() {
   const [products, setProducts] = useState<ProductWithStores[]>([])
   const [stores, setStores] = useState<any[]>([])
-  const [tasks, setTasks] = useState<any[]>([])
   const [isClient, setIsClient] = useState(false)
   const [backendOnline, setBackendOnline] = useState<boolean | null>(null)
   const [selectedStoreProduct, setSelectedStoreProduct] = useState<any | null>(null)
@@ -40,14 +39,12 @@ export default function HistoryPage() {
       
       if (isOnline) {
         try {
-          const [productList, storeList, taskList] = await Promise.all([
+          const [productList, storeList] = await Promise.all([
             productsApi.getAll(),
             storesApi.getAll(),
-            generateApi.getTasks({ limit: 50 })
           ])
           setProducts(productList)
           setStores(storeList)
-          setTasks(taskList)
         } catch (error) {
           console.error("Error loading data:", error)
         }
@@ -96,7 +93,7 @@ export default function HistoryPage() {
     link.click()
   }
 
-  const totalImages = products.reduce((acc, p) => acc + p.stores.reduce((a, s) => a + s.images.length, 0), 0)
+  const totalImages = products.reduce((acc, p) => acc + (p.stores || []).reduce((a, s) => a + (s.images?.length || 0), 0), 0)
 
   const DetailModal = () => {
     if (!selectedStoreProduct) return null
@@ -248,7 +245,7 @@ export default function HistoryPage() {
                                     <Clock className="h-3.5 w-3.5" />
                                     {new Date(product.createdAt).toLocaleDateString('tr-TR')}
                                   </span>
-                                  <span>{product.stores.length} mağaza</span>
+                                  <span>{(product.stores || []).length} mağaza</span>
                                 </div>
                               </div>
                               <Button
@@ -261,9 +258,9 @@ export default function HistoryPage() {
                               </Button>
                             </div>
 
-                            {product.stores.length > 0 && (
+                            {(product.stores || []).length > 0 && (
                               <div className="mt-3 flex flex-wrap gap-2">
-                                {product.stores.map((sp) => (
+                                {(product.stores || []).map((sp) => (
                                   <button
                                     key={sp.storeId}
                                     className="flex items-center gap-2 rounded border px-2.5 py-1.5 text-sm hover:bg-secondary transition-colors"
@@ -276,7 +273,7 @@ export default function HistoryPage() {
                                     )}
                                     <span>{getStoreName(sp.storeId)}</span>
                                     <span className="text-muted-foreground">·</span>
-                                    <span className="text-muted-foreground">{sp.images.length}</span>
+                                    <span className="text-muted-foreground">{sp.images?.length || 0}</span>
                                     <Eye className="h-3 w-3 text-muted-foreground" />
                                   </button>
                                 ))}
