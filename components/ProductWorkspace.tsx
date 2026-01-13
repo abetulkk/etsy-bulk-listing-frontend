@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { 
-  Sparkles, 
   ChevronDown, 
   ChevronUp, 
   CheckCircle2, 
@@ -15,14 +14,14 @@ import {
   AlertCircle, 
   Loader2,
   FileDown,
-  Store as StoreIcon,
-  Zap,
+  StoreIcon,
   Image as ImageIcon,
   FileText,
   Tags,
   X,
   Copy,
-  Check
+  Check,
+  Play
 } from "lucide-react"
 import { ProductData, StoreContent, Store } from "@/types"
 import { storesApi, productsApi, generateApi, checkBackendHealth, exportApi } from "@/lib/api"
@@ -284,7 +283,7 @@ export default function ProductWorkspace() {
   if (!isClient) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
       </div>
     )
   }
@@ -294,55 +293,51 @@ export default function ProductWorkspace() {
   return (
     <div className="flex-1 overflow-y-auto p-6">
       <div className="mx-auto max-w-6xl space-y-6">
-        {/* Hero Section */}
-        <div className="glass-strong rounded-2xl p-8 border border-white/20">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold gradient-text font-poppins mb-2">
-                AI İçerik Üretici
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Ürün görselinizi yükleyin, AI tüm mağazalarınız için içerik oluştursun
-              </p>
-            </div>
-            {currentProductId && readyStoresCount > 0 && (
-              <Button
-                onClick={handleExportProduct}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
-              >
-                <FileDown className="mr-2 h-4 w-4" />
-                Tümünü Export Et
-              </Button>
-            )}
+        {/* Header Section */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Ürün İçeriği</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Ürün görselinizi yükleyin ve tüm mağazalarınız için içerik oluşturun
+            </p>
           </div>
+          {currentProductId && readyStoresCount > 0 && (
+            <Button
+              onClick={handleExportProduct}
+              variant="outline"
+            >
+              <FileDown className="mr-2 h-4 w-4" />
+              Tümünü Export Et
+            </Button>
+          )}
+        </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="glass rounded-xl p-4 border border-white/20">
-              <div className="text-2xl font-bold gradient-text">{stores.length}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Mağaza</div>
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="rounded-lg border bg-white dark:bg-gray-900 p-4">
+            <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{stores.length}</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">Mağaza</div>
+          </div>
+          <div className="rounded-lg border bg-white dark:bg-gray-900 p-4">
+            <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{readyStoresCount}</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">Hazır</div>
+          </div>
+          <div className="rounded-lg border bg-white dark:bg-gray-900 p-4">
+            <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+              {Object.values(productData.stores).reduce((acc, s) => acc + (s.images?.length || 0), 0)}
             </div>
-            <div className="glass rounded-xl p-4 border border-white/20">
-              <div className="text-2xl font-bold gradient-text">{readyStoresCount}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Hazır</div>
-            </div>
-            <div className="glass rounded-xl p-4 border border-white/20">
-              <div className="text-2xl font-bold gradient-text">
-                {Object.values(productData.stores).reduce((acc, s) => acc + (s.images?.length || 0), 0)}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Görsel</div>
-            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">Görsel</div>
           </div>
         </div>
 
         {/* Backend Status */}
         {backendOnline === false && (
-          <div className="glass rounded-xl border border-red-500/50 bg-red-500/10 p-4 flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 text-red-500" />
+          <div className="rounded-lg border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/50 p-4 flex items-center gap-3">
+            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
             <div>
-              <p className="font-semibold text-red-700 dark:text-red-400">Backend servisi çalışmıyor</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Backend klasöründe <code className="rounded bg-gray-200 dark:bg-gray-800 px-1.5 py-0.5 text-xs">make up</code> komutunu çalıştırın
+              <p className="font-medium text-red-900 dark:text-red-100">Backend servisi çalışmıyor</p>
+              <p className="text-sm text-red-700 dark:text-red-300">
+                Backend klasöründe <code className="rounded bg-red-100 dark:bg-red-900 px-1.5 py-0.5 text-xs">make up</code> komutunu çalıştırın
               </p>
             </div>
           </div>
@@ -350,12 +345,12 @@ export default function ProductWorkspace() {
 
         {/* No Stores Warning */}
         {stores.length === 0 && backendOnline && (
-          <div className="glass rounded-xl border border-yellow-500/50 bg-yellow-500/10 p-4 flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 text-yellow-600" />
+          <div className="rounded-lg border border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950/50 p-4 flex items-center gap-3">
+            <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
             <div>
-              <p className="font-semibold text-yellow-700 dark:text-yellow-400">Mağaza bulunamadı</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Lütfen önce <a href="/stores" className="underline font-semibold">Mağazalar</a> sayfasından mağaza ekleyin
+              <p className="font-medium text-yellow-900 dark:text-yellow-100">Mağaza bulunamadı</p>
+              <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                Lütfen önce <a href="/stores" className="underline font-medium">Mağazalar</a> sayfasından mağaza ekleyin
               </p>
             </div>
           </div>
@@ -363,14 +358,14 @@ export default function ProductWorkspace() {
 
         {/* Image & Description */}
         <div className="grid gap-6 md:grid-cols-2">
-          <Card className="glass-strong border-white/20 overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-indigo-500/10 border-b border-white/20">
-              <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <ImageIcon className="h-5 w-5 text-purple-600" />
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <ImageIcon className="h-4 w-4" />
                 Ürün Görseli
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent>
               <ImageUpload
                 label=""
                 value={productData.mainImage}
@@ -380,20 +375,20 @@ export default function ProductWorkspace() {
             </CardContent>
           </Card>
 
-          <Card className="glass-strong border-white/20 overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-indigo-500/10 border-b border-white/20">
-              <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <FileText className="h-5 w-5 text-pink-600" />
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <FileText className="h-4 w-4" />
                 Ürün Açıklaması
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent>
               <Textarea
                 value={productDescription}
                 onChange={(e) => setProductDescription(e.target.value)}
                 placeholder="Ürün özelliklerini, malzemelerini, boyutlarını yazın..."
                 rows={8}
-                className="resize-none glass border-white/20"
+                className="resize-none"
               />
             </CardContent>
           </Card>
@@ -405,7 +400,6 @@ export default function ProductWorkspace() {
             <Button 
               variant="outline" 
               onClick={startNewProduct}
-              className="glass border-white/20"
             >
               <X className="mr-2 h-4 w-4" />
               Yeni Ürün
@@ -414,19 +408,17 @@ export default function ProductWorkspace() {
           <Button
             onClick={generateContent}
             disabled={!productData.mainImage || isGenerating || !backendOnline || stores.length === 0}
-            className="bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-700 hover:via-pink-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             size="lg"
           >
             {isGenerating ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                AI İçerik Üretiliyor...
+                İçerik Üretiliyor...
               </>
             ) : (
               <>
-                <Sparkles className="mr-2 h-5 w-5" />
-                <Zap className="mr-2 h-5 w-5" />
-                AI ile Tüm Mağazalar İçin Üret
+                <Play className="mr-2 h-5 w-5" />
+                Tüm Mağazalar İçin Üret
               </>
             )}
           </Button>
@@ -435,8 +427,8 @@ export default function ProductWorkspace() {
         {/* Store Results */}
         {stores.length > 0 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold gradient-text font-poppins flex items-center gap-2">
-              <StoreIcon className="h-6 w-6" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <StoreIcon className="h-5 w-5" />
               Mağaza Çıktıları
             </h2>
             
@@ -447,29 +439,23 @@ export default function ProductWorkspace() {
               const isExpanded = expandedStores.has(store.id)
 
               return (
-                <Card key={store.id} className="glass-strong border-white/20 overflow-hidden hover:shadow-xl transition-all">
+                <Card key={store.id} className="overflow-hidden">
                   <CardHeader 
-                    className="cursor-pointer py-5 bg-gradient-to-r from-purple-500/5 via-pink-500/5 to-indigo-500/5 border-b border-white/20"
+                    className="cursor-pointer py-4"
                     onClick={() => toggleStore(store.id)}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3">
                         {status === "GENERATING" ? (
-                          <div className="relative">
-                            <Loader2 className="h-6 w-6 animate-spin text-purple-500" />
-                            <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-md" />
-                          </div>
+                          <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
                         ) : isReady ? (
-                          <div className="relative">
-                            <CheckCircle2 className="h-6 w-6 text-emerald-500" />
-                            <div className="absolute inset-0 rounded-full bg-emerald-500/20 blur-md" />
-                          </div>
+                          <CheckCircle2 className="h-5 w-5 text-green-600" />
                         ) : (
-                          <Circle className="h-6 w-6 text-gray-400" />
+                          <Circle className="h-5 w-5 text-gray-400" />
                         )}
                         <div>
-                          <CardTitle className="text-lg font-bold font-poppins">{store.name}</CardTitle>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2 mt-1">
+                          <CardTitle className="text-base">{store.name}</CardTitle>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2 mt-0.5">
                             <span>{store.concept || "Konsept yok"}</span>
                             {storeContent && storeContent.images.length > 0 && (
                               <>
@@ -485,33 +471,30 @@ export default function ProductWorkspace() {
                       </div>
                       <div className="flex items-center gap-2">
                         {isReady && (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={(e) => { e.stopPropagation(); handleExportStore(store.id) }}
-                              className="glass border-white/20 hover:bg-purple-500/10"
-                            >
-                              <Download className="mr-2 h-4 w-4" />
-                              Export
-                            </Button>
-                          </>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => { e.stopPropagation(); handleExportStore(store.id) }}
+                          >
+                            <Download className="mr-2 h-4 w-4" />
+                            Export
+                          </Button>
                         )}
                         {isExpanded ? (
-                          <ChevronUp className="h-5 w-5 text-gray-400" />
+                          <ChevronUp className="h-4 w-4 text-gray-400" />
                         ) : (
-                          <ChevronDown className="h-5 w-5 text-gray-400" />
+                          <ChevronDown className="h-4 w-4 text-gray-400" />
                         )}
                       </div>
                     </div>
                   </CardHeader>
 
                   {isExpanded && storeContent && storeContent.images.length > 0 && (
-                    <CardContent className="p-6 space-y-6">
+                    <CardContent className="border-t pt-6 space-y-6">
                       {/* Title */}
-                      <div className="glass rounded-xl p-4 border border-white/20">
+                      <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 p-4">
                         <div className="flex items-center justify-between mb-2">
-                          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">BAŞLIK</p>
+                          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">BAŞLIK</p>
                           <Button
                             size="sm"
                             variant="ghost"
@@ -519,19 +502,19 @@ export default function ProductWorkspace() {
                             className="h-6 w-6 p-0"
                           >
                             {copiedStoreId === `${store.id}-title` ? (
-                              <Check className="h-3 w-3 text-emerald-500" />
+                              <Check className="h-3 w-3 text-green-600" />
                             ) : (
                               <Copy className="h-3 w-3" />
                             )}
                           </Button>
                         </div>
-                        <p className="text-base font-semibold">{storeContent.title}</p>
+                        <p className="text-base font-medium text-gray-900 dark:text-gray-100">{storeContent.title}</p>
                       </div>
 
                       {/* Description */}
-                      <div className="glass rounded-xl p-4 border border-white/20">
+                      <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 p-4">
                         <div className="flex items-center justify-between mb-2">
-                          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">AÇIKLAMA</p>
+                          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">AÇIKLAMA</p>
                           <Button
                             size="sm"
                             variant="ghost"
@@ -539,7 +522,7 @@ export default function ProductWorkspace() {
                             className="h-6 w-6 p-0"
                           >
                             {copiedStoreId === `${store.id}-desc` ? (
-                              <Check className="h-3 w-3 text-emerald-500" />
+                              <Check className="h-3 w-3 text-green-600" />
                             ) : (
                               <Copy className="h-3 w-3" />
                             )}
@@ -549,9 +532,9 @@ export default function ProductWorkspace() {
                       </div>
 
                       {/* Tags */}
-                      <div className="glass rounded-xl p-4 border border-white/20">
+                      <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 p-4">
                         <div className="flex items-center justify-between mb-3">
-                          <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide flex items-center gap-2">
+                          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide flex items-center gap-2">
                             <Tags className="h-3 w-3" />
                             TAGLER ({storeContent.tags.length})
                           </p>
@@ -562,7 +545,7 @@ export default function ProductWorkspace() {
                             className="h-6 w-6 p-0"
                           >
                             {copiedStoreId === `${store.id}-tags` ? (
-                              <Check className="h-3 w-3 text-emerald-500" />
+                              <Check className="h-3 w-3 text-green-600" />
                             ) : (
                               <Copy className="h-3 w-3" />
                             )}
@@ -572,7 +555,7 @@ export default function ProductWorkspace() {
                           {storeContent.tags.map((tag, i) => (
                             <span 
                               key={i} 
-                              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 border border-purple-200/50 dark:border-purple-700/50"
+                              className="px-2.5 py-1 text-xs font-medium rounded-md bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
                             >
                               {tag}
                             </span>
@@ -581,21 +564,21 @@ export default function ProductWorkspace() {
                       </div>
 
                       {/* Images */}
-                      <div className="glass rounded-xl p-4 border border-white/20">
-                        <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4 flex items-center gap-2">
+                      <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 p-4">
+                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4 flex items-center gap-2">
                           <ImageIcon className="h-3 w-3" />
                           GÖRSELLER ({storeContent.images.length})
                         </p>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                           {storeContent.images.map((url, idx) => (
-                            <div key={idx} className="relative group">
+                            <div key={idx} className="relative">
                               <img 
                                 src={url} 
                                 alt={`${store.name} - Image ${idx + 1}`}
-                                className="aspect-square rounded-xl object-cover border-2 border-white/20 shadow-lg group-hover:scale-105 transition-transform"
+                                className="aspect-square rounded-lg object-cover border shadow-sm"
                               />
                               {idx === 0 && (
-                                <div className="absolute top-2 right-2 px-2 py-1 text-xs font-bold rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
+                                <div className="absolute top-2 right-2 px-2 py-0.5 text-xs font-medium rounded bg-blue-600 text-white">
                                   Ana
                                 </div>
                               )}

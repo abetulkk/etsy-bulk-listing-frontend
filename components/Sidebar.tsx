@@ -9,9 +9,7 @@ import {
   FileText, 
   History, 
   LucideIcon,
-  Sparkles,
-  Download,
-  Zap
+  Package
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { checkBackendHealth } from "@/lib/api"
@@ -20,7 +18,6 @@ interface NavItem {
   icon: LucideIcon
   label: string
   href: string
-  badge?: string
 }
 
 const navItems: NavItem[] = [
@@ -46,29 +43,23 @@ export default function Sidebar() {
   }, [])
 
   return (
-    <div className="flex h-screen w-72 flex-col glass border-r border-white/20">
+    <div className="flex h-screen w-64 flex-col border-r bg-white dark:bg-gray-950">
       {/* Logo */}
-      <div className="flex h-20 items-center border-b border-white/20 px-6">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative">
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500 opacity-60 blur-lg group-hover:opacity-80 transition-opacity" />
-            <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 via-pink-600 to-indigo-600 shadow-lg group-hover:scale-105 transition-transform">
-              <Sparkles className="h-6 w-6 text-white" />
-            </div>
+      <div className="flex h-16 items-center border-b px-6">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
+            <Package className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-lg font-bold gradient-text font-poppins">
+            <div className="text-base font-semibold text-gray-900 dark:text-gray-100">
               EtsyMultiLister
-            </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-              AI-Powered Content
             </div>
           </div>
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-2 p-4 overflow-y-auto">
+      <nav className="flex-1 space-y-1 p-3">
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href
@@ -77,55 +68,29 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200",
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-indigo-500/20 text-purple-700 dark:text-purple-300 shadow-lg"
-                  : "text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 hover:text-purple-600 dark:hover:text-purple-400"
+                  ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-gray-100"
               )}
             >
-              {isActive && (
-                <div className="absolute left-0 top-0 bottom-0 w-1 rounded-r-full bg-gradient-to-b from-purple-500 via-pink-500 to-indigo-500" />
-              )}
-              <Icon className={cn(
-                "h-5 w-5 transition-transform",
-                isActive && "scale-110"
-              )} />
-              <span className="font-poppins">{item.label}</span>
-              {item.badge && (
-                <span className="ml-auto px-2 py-0.5 text-xs font-bold rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                  {item.badge}
-                </span>
-              )}
+              <Icon className="h-4 w-4" />
+              {item.label}
             </Link>
           )
         })}
       </nav>
 
-      {/* Status & Quick Actions */}
-      <div className="border-t border-white/20 p-4 space-y-3">
-        {/* Status */}
-        <div className="glass rounded-xl p-3">
-          <div className="flex items-center gap-2 text-xs font-medium">
-            <div className={cn(
-              "h-2.5 w-2.5 rounded-full transition-all",
-              backendOnline ? "bg-emerald-500 shadow-lg shadow-emerald-500/50" : 
-              backendOnline === false ? "bg-red-500 shadow-lg shadow-red-500/50" : 
-              "bg-gray-400 animate-pulse"
-            )} />
-            <span className="text-gray-700 dark:text-gray-300 font-poppins">
-              {backendOnline ? "Backend Aktif" : backendOnline === false ? "Backend Kapalı" : "Kontrol ediliyor..."}
-            </span>
-          </div>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="glass rounded-xl p-3">
-          <div className="flex items-center gap-2 text-xs">
-            <Zap className="h-4 w-4 text-yellow-500" />
-            <span className="text-gray-700 dark:text-gray-300 font-medium">
-              AI Powered
-            </span>
-          </div>
+      {/* Status */}
+      <div className="border-t p-4">
+        <div className="flex items-center gap-2 text-xs">
+          <div className={cn(
+            "h-2 w-2 rounded-full",
+            backendOnline ? "bg-green-500" : backendOnline === false ? "bg-red-500" : "bg-gray-400"
+          )} />
+          <span className="text-gray-500 dark:text-gray-400">
+            {backendOnline ? "Bağlantı aktif" : backendOnline === false ? "Bağlantı kapalı" : "Kontrol ediliyor..."}
+          </span>
         </div>
       </div>
     </div>
