@@ -9,7 +9,6 @@ import {
   FileText, 
   History, 
   LucideIcon,
-  Package
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { checkBackendHealth } from "@/lib/api"
@@ -43,23 +42,19 @@ export default function Sidebar() {
   }, [])
 
   return (
-    <div className="flex h-screen w-64 flex-col border-r bg-white dark:bg-gray-950">
+    <div className="flex h-screen w-64 flex-col border-r bg-white">
       {/* Logo */}
-      <div className="flex h-16 items-center border-b px-6">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
-            <Package className="h-5 w-5" />
+      <div className="flex h-16 items-center border-b px-5">
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white font-bold text-sm">
+            E
           </div>
-          <div>
-            <div className="text-base font-semibold text-gray-900 dark:text-gray-100">
-              EtsyMultiLister
-            </div>
-          </div>
+          <span className="text-lg font-semibold text-gray-900">EtsyMultiLister</span>
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 p-3">
+      <nav className="flex-1 p-3 space-y-1">
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href
@@ -68,13 +63,13 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-gray-100"
+                  ? "bg-primary/10 text-primary"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-5 w-5" />
               {item.label}
             </Link>
           )
@@ -83,13 +78,13 @@ export default function Sidebar() {
 
       {/* Status */}
       <div className="border-t p-4">
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-xs text-gray-500">
           <div className={cn(
             "h-2 w-2 rounded-full",
-            backendOnline ? "bg-green-500" : backendOnline === false ? "bg-red-500" : "bg-gray-400"
+            backendOnline ? "bg-green-500" : backendOnline === false ? "bg-red-500" : "bg-gray-300"
           )} />
-          <span className="text-gray-500 dark:text-gray-400">
-            {backendOnline ? "Bağlantı aktif" : backendOnline === false ? "Bağlantı kapalı" : "Kontrol ediliyor..."}
+          <span>
+            {backendOnline ? "Bağlı" : backendOnline === false ? "Bağlantı yok" : "Kontrol ediliyor..."}
           </span>
         </div>
       </div>

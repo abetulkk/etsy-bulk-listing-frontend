@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { 
+  Sparkles, 
   ChevronDown, 
   ChevronUp, 
   CheckCircle2, 
@@ -14,14 +15,10 @@ import {
   AlertCircle, 
   Loader2,
   FileDown,
-  StoreIcon,
-  Image as ImageIcon,
-  FileText,
-  Tags,
+  Store as StoreIcon,
   X,
   Copy,
-  Check,
-  Play
+  Check
 } from "lucide-react"
 import { ProductData, StoreContent, Store } from "@/types"
 import { storesApi, productsApi, generateApi, checkBackendHealth, exportApi } from "@/lib/api"
@@ -228,7 +225,7 @@ export default function ProductWorkspace() {
 
   const isStoreReady = (storeId: string) => {
     const storeContent = productData.stores[storeId]
-    return storeContent && storeContent.images.length > 0
+    return storeContent && storeContent.title && storeContent.description
   }
 
   const getStoreStatus = (storeId: string) => {
@@ -283,7 +280,7 @@ export default function ProductWorkspace() {
   if (!isClient) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
       </div>
     )
   }
@@ -291,53 +288,16 @@ export default function ProductWorkspace() {
   const readyStoresCount = stores.filter(s => isStoreReady(s.id)).length
 
   return (
-    <div className="flex-1 overflow-y-auto p-6">
-      <div className="mx-auto max-w-6xl space-y-6">
-        {/* Header Section */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Ürün İçeriği</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Ürün görselinizi yükleyin ve tüm mağazalarınız için içerik oluşturun
-            </p>
-          </div>
-          {currentProductId && readyStoresCount > 0 && (
-            <Button
-              onClick={handleExportProduct}
-              variant="outline"
-            >
-              <FileDown className="mr-2 h-4 w-4" />
-              Tümünü Export Et
-            </Button>
-          )}
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="rounded-lg border bg-white dark:bg-gray-900 p-4">
-            <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{stores.length}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">Mağaza</div>
-          </div>
-          <div className="rounded-lg border bg-white dark:bg-gray-900 p-4">
-            <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{readyStoresCount}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">Hazır</div>
-          </div>
-          <div className="rounded-lg border bg-white dark:bg-gray-900 p-4">
-            <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {Object.values(productData.stores).reduce((acc, s) => acc + (s.images?.length || 0), 0)}
-            </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">Görsel</div>
-          </div>
-        </div>
-
+    <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+      <div className="mx-auto max-w-5xl space-y-6">
         {/* Backend Status */}
         {backendOnline === false && (
-          <div className="rounded-lg border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/50 p-4 flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+          <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+            <AlertCircle className="h-5 w-5 text-red-600" />
             <div>
-              <p className="font-medium text-red-900 dark:text-red-100">Backend servisi çalışmıyor</p>
-              <p className="text-sm text-red-700 dark:text-red-300">
-                Backend klasöründe <code className="rounded bg-red-100 dark:bg-red-900 px-1.5 py-0.5 text-xs">make up</code> komutunu çalıştırın
+              <p className="font-medium text-red-800">Backend servisi çalışmıyor</p>
+              <p className="text-sm text-red-600">
+                Backend klasöründe <code className="rounded bg-red-100 px-1.5 py-0.5 text-xs">make up</code> komutunu çalıştırın
               </p>
             </div>
           </div>
@@ -345,25 +305,46 @@ export default function ProductWorkspace() {
 
         {/* No Stores Warning */}
         {stores.length === 0 && backendOnline && (
-          <div className="rounded-lg border border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950/50 p-4 flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+          <div className="flex items-center gap-3 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+            <AlertCircle className="h-5 w-5 text-yellow-600" />
             <div>
-              <p className="font-medium text-yellow-900 dark:text-yellow-100">Mağaza bulunamadı</p>
-              <p className="text-sm text-yellow-700 dark:text-yellow-300">
+              <p className="font-medium text-yellow-800">Mağaza bulunamadı</p>
+              <p className="text-sm text-yellow-600">
                 Lütfen önce <a href="/stores" className="underline font-medium">Mağazalar</a> sayfasından mağaza ekleyin
               </p>
             </div>
           </div>
         )}
 
+        {/* Stats Bar */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-6 text-sm">
+            <div>
+              <span className="text-gray-500">Mağaza:</span>
+              <span className="ml-1.5 font-semibold text-gray-900">{stores.length}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">Hazır:</span>
+              <span className="ml-1.5 font-semibold text-gray-900">{readyStoresCount}</span>
+            </div>
+          </div>
+          {currentProductId && readyStoresCount > 0 && (
+            <Button
+              onClick={handleExportProduct}
+              variant="outline"
+              size="sm"
+            >
+              <FileDown className="mr-2 h-4 w-4" />
+              Tümünü Export Et
+            </Button>
+          )}
+        </div>
+
         {/* Image & Description */}
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <ImageIcon className="h-4 w-4" />
-                Ürün Görseli
-              </CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-gray-700">Ürün Görseli</CardTitle>
             </CardHeader>
             <CardContent>
               <ImageUpload
@@ -376,11 +357,8 @@ export default function ProductWorkspace() {
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Ürün Açıklaması
-              </CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-gray-700">Ürün Açıklaması (Opsiyonel)</CardTitle>
             </CardHeader>
             <CardContent>
               <Textarea
@@ -388,7 +366,7 @@ export default function ProductWorkspace() {
                 onChange={(e) => setProductDescription(e.target.value)}
                 placeholder="Ürün özelliklerini, malzemelerini, boyutlarını yazın..."
                 rows={8}
-                className="resize-none"
+                className="resize-none text-sm"
               />
             </CardContent>
           </Card>
@@ -397,10 +375,7 @@ export default function ProductWorkspace() {
         {/* Actions */}
         <div className="flex items-center justify-center gap-3">
           {currentProductId && (
-            <Button 
-              variant="outline" 
-              onClick={startNewProduct}
-            >
+            <Button variant="outline" onClick={startNewProduct} size="sm">
               <X className="mr-2 h-4 w-4" />
               Yeni Ürün
             </Button>
@@ -408,17 +383,17 @@ export default function ProductWorkspace() {
           <Button
             onClick={generateContent}
             disabled={!productData.mainImage || isGenerating || !backendOnline || stores.length === 0}
-            size="lg"
+            size="default"
           >
             {isGenerating ? (
               <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                İçerik Üretiliyor...
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Üretiliyor...
               </>
             ) : (
               <>
-                <Play className="mr-2 h-5 w-5" />
-                Tüm Mağazalar İçin Üret
+                <Sparkles className="mr-2 h-4 w-4" />
+                İçerik Oluştur
               </>
             )}
           </Button>
@@ -426,9 +401,9 @@ export default function ProductWorkspace() {
 
         {/* Store Results */}
         {stores.length > 0 && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-              <StoreIcon className="h-5 w-5" />
+          <div className="space-y-3">
+            <h2 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+              <StoreIcon className="h-4 w-4" />
               Mağaza Çıktıları
             </h2>
             
@@ -441,31 +416,22 @@ export default function ProductWorkspace() {
               return (
                 <Card key={store.id} className="overflow-hidden">
                   <CardHeader 
-                    className="cursor-pointer py-4"
+                    className="cursor-pointer py-4 hover:bg-gray-50 transition-colors"
                     onClick={() => toggleStore(store.id)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         {status === "GENERATING" ? (
-                          <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+                          <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
                         ) : isReady ? (
-                          <CheckCircle2 className="h-5 w-5 text-green-600" />
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
                         ) : (
-                          <Circle className="h-5 w-5 text-gray-400" />
+                          <Circle className="h-4 w-4 text-gray-300" />
                         )}
                         <div>
-                          <CardTitle className="text-base">{store.name}</CardTitle>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2 mt-0.5">
-                            <span>{store.concept || "Konsept yok"}</span>
-                            {storeContent && storeContent.images.length > 0 && (
-                              <>
-                                <span>•</span>
-                                <span className="flex items-center gap-1">
-                                  <ImageIcon className="h-3 w-3" />
-                                  {storeContent.images.length} görsel
-                                </span>
-                              </>
-                            )}
+                          <CardTitle className="text-sm font-medium">{store.name}</CardTitle>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {store.concept || "Konsept yok"}
                           </p>
                         </div>
                       </div>
@@ -473,10 +439,11 @@ export default function ProductWorkspace() {
                         {isReady && (
                           <Button
                             size="sm"
-                            variant="outline"
+                            variant="ghost"
                             onClick={(e) => { e.stopPropagation(); handleExportStore(store.id) }}
+                            className="h-8 text-xs"
                           >
-                            <Download className="mr-2 h-4 w-4" />
+                            <Download className="mr-1.5 h-3.5 w-3.5" />
                             Export
                           </Button>
                         )}
@@ -489,12 +456,12 @@ export default function ProductWorkspace() {
                     </div>
                   </CardHeader>
 
-                  {isExpanded && storeContent && storeContent.images.length > 0 && (
-                    <CardContent className="border-t pt-6 space-y-6">
+                  {isExpanded && storeContent && storeContent.title && (
+                    <CardContent className="border-t bg-gray-50/50 pt-4 space-y-4">
                       {/* Title */}
-                      <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">BAŞLIK</p>
+                      <div className="bg-white rounded-lg p-3 border">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <p className="text-xs font-medium text-gray-500 uppercase">Başlık</p>
                           <Button
                             size="sm"
                             variant="ghost"
@@ -502,19 +469,19 @@ export default function ProductWorkspace() {
                             className="h-6 w-6 p-0"
                           >
                             {copiedStoreId === `${store.id}-title` ? (
-                              <Check className="h-3 w-3 text-green-600" />
+                              <Check className="h-3 w-3 text-green-500" />
                             ) : (
-                              <Copy className="h-3 w-3" />
+                              <Copy className="h-3 w-3 text-gray-400" />
                             )}
                           </Button>
                         </div>
-                        <p className="text-base font-medium text-gray-900 dark:text-gray-100">{storeContent.title}</p>
+                        <p className="text-sm text-gray-900">{storeContent.title}</p>
                       </div>
 
                       {/* Description */}
-                      <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">AÇIKLAMA</p>
+                      <div className="bg-white rounded-lg p-3 border">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <p className="text-xs font-medium text-gray-500 uppercase">Açıklama</p>
                           <Button
                             size="sm"
                             variant="ghost"
@@ -522,21 +489,20 @@ export default function ProductWorkspace() {
                             className="h-6 w-6 p-0"
                           >
                             {copiedStoreId === `${store.id}-desc` ? (
-                              <Check className="h-3 w-3 text-green-600" />
+                              <Check className="h-3 w-3 text-green-500" />
                             ) : (
-                              <Copy className="h-3 w-3" />
+                              <Copy className="h-3 w-3 text-gray-400" />
                             )}
                           </Button>
                         </div>
-                        <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{storeContent.description}</p>
+                        <p className="text-sm text-gray-700 whitespace-pre-wrap">{storeContent.description}</p>
                       </div>
 
                       {/* Tags */}
-                      <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide flex items-center gap-2">
-                            <Tags className="h-3 w-3" />
-                            TAGLER ({storeContent.tags.length})
+                      <div className="bg-white rounded-lg p-3 border">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-xs font-medium text-gray-500 uppercase">
+                            Etiketler ({storeContent.tags.length})
                           </p>
                           <Button
                             size="sm"
@@ -545,17 +511,17 @@ export default function ProductWorkspace() {
                             className="h-6 w-6 p-0"
                           >
                             {copiedStoreId === `${store.id}-tags` ? (
-                              <Check className="h-3 w-3 text-green-600" />
+                              <Check className="h-3 w-3 text-green-500" />
                             ) : (
-                              <Copy className="h-3 w-3" />
+                              <Copy className="h-3 w-3 text-gray-400" />
                             )}
                           </Button>
                         </div>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-1.5">
                           {storeContent.tags.map((tag, i) => (
                             <span 
                               key={i} 
-                              className="px-2.5 py-1 text-xs font-medium rounded-md bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+                              className="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700"
                             >
                               {tag}
                             </span>
@@ -564,28 +530,29 @@ export default function ProductWorkspace() {
                       </div>
 
                       {/* Images */}
-                      <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 p-4">
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4 flex items-center gap-2">
-                          <ImageIcon className="h-3 w-3" />
-                          GÖRSELLER ({storeContent.images.length})
-                        </p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                          {storeContent.images.map((url, idx) => (
-                            <div key={idx} className="relative">
-                              <img 
-                                src={url} 
-                                alt={`${store.name} - Image ${idx + 1}`}
-                                className="aspect-square rounded-lg object-cover border shadow-sm"
-                              />
-                              {idx === 0 && (
-                                <div className="absolute top-2 right-2 px-2 py-0.5 text-xs font-medium rounded bg-blue-600 text-white">
-                                  Ana
-                                </div>
-                              )}
-                            </div>
-                          ))}
+                      {storeContent.images && storeContent.images.length > 0 && (
+                        <div className="bg-white rounded-lg p-3 border">
+                          <p className="text-xs font-medium text-gray-500 uppercase mb-2">
+                            Görseller ({storeContent.images.length})
+                          </p>
+                          <div className="grid grid-cols-4 gap-2">
+                            {storeContent.images.map((url, idx) => (
+                              <div key={idx} className="relative aspect-square">
+                                <img 
+                                  src={url} 
+                                  alt={`${store.name} - ${idx + 1}`}
+                                  className="w-full h-full rounded object-cover border"
+                                />
+                                {idx === 0 && (
+                                  <div className="absolute top-1 right-1 px-1.5 py-0.5 text-[10px] font-medium rounded bg-primary text-white">
+                                    Ana
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </CardContent>
                   )}
                 </Card>

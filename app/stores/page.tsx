@@ -151,88 +151,80 @@ export default function StoresPage() {
   ]
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-gray-50">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header />
         {!isClient ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-muted-foreground">Yükleniyor...</div>
+            <div className="text-gray-500">Yükleniyor...</div>
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto p-6">
-            <div className="mx-auto max-w-6xl space-y-6">
+            <div className="mx-auto max-w-5xl space-y-6">
               {/* Backend Status */}
               {backendOnline === false && (
-                <div className="rounded-lg border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/50 p-4 flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+                  <AlertCircle className="h-5 w-5 text-red-600" />
                   <div>
-                    <p className="font-medium text-red-900 dark:text-red-100">Backend servisi çalışmıyor</p>
-                    <p className="text-sm text-red-700 dark:text-red-300">
-                      Backend klasöründe <code className="rounded bg-red-100 dark:bg-red-900 px-1.5 py-0.5 text-xs">make up</code> komutunu çalıştırın
+                    <p className="font-medium text-red-800">Backend servisi çalışmıyor</p>
+                    <p className="text-sm text-red-600">
+                      Backend klasöründe <code className="rounded bg-red-100 px-1.5 py-0.5 text-xs">make up</code> komutunu çalıştırın
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* Header */}
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Mağazalar</h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Mağazalarınızı ekleyin, yönetin ve export edin</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  {stores.length > 0 && (
-                    <Button
-                      onClick={handleExportAll}
-                      variant="outline"
-                    >
-                      <FileDown className="mr-2 h-4 w-4" />
-                      Tümünü Export
-                    </Button>
-                  )}
-                  <Button 
-                    onClick={() => setIsAdding(true)}
-                    disabled={!backendOnline || isAdding}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Yeni Mağaza
-                  </Button>
-                </div>
-              </div>
-
               {/* Stores Table */}
-              <Card className="overflow-hidden">
-                <CardHeader>
-                  <div className="flex flex-row items-center justify-between">
-                    <div>
-                      <CardTitle className="text-base font-semibold">Mağaza Listesi</CardTitle>
-                      <CardDescription className="mt-1">{stores.length} mağaza</CardDescription>
-                    </div>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                  <div>
+                    <CardTitle className="text-base font-medium">Mağazalar</CardTitle>
+                    <CardDescription>{stores.length} mağaza</CardDescription>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {stores.length > 0 && (
+                      <Button 
+                        size="sm"
+                        variant="outline"
+                        onClick={handleExportAll}
+                      >
+                        <FileDown className="mr-2 h-4 w-4" />
+                        Tümünü Export
+                      </Button>
+                    )}
+                    <Button 
+                      size="sm"
+                      onClick={() => setIsAdding(true)}
+                      disabled={!backendOnline || isAdding}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Yeni Mağaza
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-white/50 dark:bg-gray-900/50">
-                        <TableHead className="font-semibold">Mağaza Adı</TableHead>
-                        <TableHead className="font-semibold">Konsept</TableHead>
-                        <TableHead className="text-center font-semibold">Görsel</TableHead>
-                        <TableHead className="text-center font-semibold">Infografik</TableHead>
-                        <TableHead className="text-center font-semibold">Video</TableHead>
-                        <TableHead className="w-[150px] font-semibold">İşlemler</TableHead>
+                      <TableRow>
+                        <TableHead>Mağaza Adı</TableHead>
+                        <TableHead>Konsept</TableHead>
+                        <TableHead className="text-center">Görsel</TableHead>
+                        <TableHead className="text-center">Infografik</TableHead>
+                        <TableHead className="text-center">Video</TableHead>
+                        <TableHead className="w-[120px]"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {/* Add New Row */}
                       {isAdding && (
-                        <TableRow className="bg-gray-50 dark:bg-gray-900">
+                        <TableRow>
                           <TableCell>
                             <Input
                               value={newStore.name}
                               onChange={(e) => setNewStore(prev => ({ ...prev, name: e.target.value }))}
                               placeholder="Mağaza adı"
-                              className="h-9"
+                              className="h-8"
                               autoFocus
                             />
                           </TableCell>
@@ -240,7 +232,7 @@ export default function StoresPage() {
                             <select
                               value={newStore.concept}
                               onChange={(e) => setNewStore(prev => ({ ...prev, concept: e.target.value }))}
-                              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+                              className="h-8 w-full rounded-md border border-input bg-background px-3 text-sm"
                             >
                               {conceptOptions.map(opt => (
                                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -254,22 +246,17 @@ export default function StoresPage() {
                               max={10}
                               value={newStore.imageCount}
                               onChange={(e) => setNewStore(prev => ({ ...prev, imageCount: parseInt(e.target.value) || 1 }))}
-                              className="h-9 w-16 mx-auto text-center"
+                              className="h-8 w-16 mx-auto text-center"
                             />
                           </TableCell>
-                          <TableCell className="text-center text-muted-foreground">—</TableCell>
-                          <TableCell className="text-center text-muted-foreground">—</TableCell>
+                          <TableCell className="text-center text-gray-400">—</TableCell>
+                          <TableCell className="text-center text-gray-400">—</TableCell>
                           <TableCell>
                             <div className="flex justify-end gap-1">
                               <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setIsAdding(false)}>
                                 <X className="h-4 w-4" />
                               </Button>
-                              <Button 
-                                size="icon" 
-                                className="h-8 w-8" 
-                                onClick={addStore} 
-                                disabled={!newStore.name.trim()}
-                              >
+                              <Button size="icon" className="h-8 w-8" onClick={addStore} disabled={!newStore.name.trim()}>
                                 <Check className="h-4 w-4" />
                               </Button>
                             </div>
@@ -279,21 +266,21 @@ export default function StoresPage() {
 
                       {/* Store Rows */}
                       {stores.map((store) => (
-                        <TableRow key={store.id} className="hover:bg-white/30 dark:hover:bg-gray-800/30 transition-colors">
+                        <TableRow key={store.id}>
                           {editingId === store.id ? (
                             <>
                               <TableCell>
                                 <Input
                                   value={editForm.name || ""}
                                   onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                                  className="h-9 glass border-white/20"
+                                  className="h-8"
                                 />
                               </TableCell>
                               <TableCell>
                                 <select
                                   value={editForm.concept || ""}
                                   onChange={(e) => setEditForm(prev => ({ ...prev, concept: e.target.value }))}
-                                  className="h-9 w-full rounded-lg glass border border-white/20 bg-background px-3 text-sm"
+                                  className="h-8 w-full rounded-md border border-input bg-background px-3 text-sm"
                                 >
                                   {conceptOptions.map(opt => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -307,7 +294,7 @@ export default function StoresPage() {
                                   max={10}
                                   value={editForm.imageCount || 1}
                                   onChange={(e) => setEditForm(prev => ({ ...prev, imageCount: parseInt(e.target.value) || 1 }))}
-                                  className="h-9 w-16 mx-auto text-center glass border-white/20"
+                                  className="h-8 w-16 mx-auto text-center"
                                 />
                               </TableCell>
                               <TableCell className="text-center">
@@ -315,7 +302,7 @@ export default function StoresPage() {
                                   type="checkbox"
                                   checked={editForm.hasInfographic || false}
                                   onChange={(e) => setEditForm(prev => ({ ...prev, hasInfographic: e.target.checked }))}
-                                  className="h-4 w-4 rounded border-input accent-purple-600"
+                                  className="h-4 w-4 rounded border-input"
                                 />
                               </TableCell>
                               <TableCell className="text-center">
@@ -323,7 +310,7 @@ export default function StoresPage() {
                                   type="checkbox"
                                   checked={editForm.hasVideo || false}
                                   onChange={(e) => setEditForm(prev => ({ ...prev, hasVideo: e.target.checked }))}
-                                  className="h-4 w-4 rounded border-input accent-purple-600"
+                                  className="h-4 w-4 rounded border-input"
                                 />
                               </TableCell>
                               <TableCell>
@@ -331,11 +318,7 @@ export default function StoresPage() {
                                   <Button size="icon" variant="ghost" className="h-8 w-8" onClick={cancelEdit}>
                                     <X className="h-4 w-4" />
                                   </Button>
-                                  <Button 
-                                    size="icon" 
-                                    className="h-8 w-8" 
-                                    onClick={saveEdit}
-                                  >
+                                  <Button size="icon" className="h-8 w-8" onClick={saveEdit}>
                                     <Check className="h-4 w-4" />
                                   </Button>
                                 </div>
@@ -346,54 +329,33 @@ export default function StoresPage() {
                               <TableCell className="font-medium">{store.name}</TableCell>
                               <TableCell>
                                 {store.concept ? (
-                                  <span className="inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-950/50 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                                  <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
                                     {store.concept}
                                   </span>
                                 ) : (
-                                  <span className="text-muted-foreground">—</span>
+                                  <span className="text-gray-400">—</span>
                                 )}
                               </TableCell>
-                              <TableCell className="text-center font-medium">{store.imageCount}</TableCell>
+                              <TableCell className="text-center">{store.imageCount}</TableCell>
                               <TableCell className="text-center">
-                                {store.hasInfographic ? (
-                                  <span className="text-emerald-600 font-semibold">✓</span>
-                                ) : (
-                                  <span className="text-muted-foreground">—</span>
-                                )}
+                                {store.hasInfographic ? "✓" : "—"}
                               </TableCell>
                               <TableCell className="text-center">
-                                {store.hasVideo ? (
-                                  <span className="text-emerald-600 font-semibold">✓</span>
-                                ) : (
-                                  <span className="text-muted-foreground">—</span>
-                                )}
+                                {store.hasVideo ? "✓" : "—"}
                               </TableCell>
                               <TableCell>
                                 <div className="flex justify-end gap-1">
-                                  <Button 
-                                    size="icon" 
-                                    variant="ghost" 
-                                    className="h-8 w-8" 
-                                    onClick={() => handleExportStore(store.id)}
-                                    title="Export"
-                                  >
+                                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleExportStore(store.id)}>
                                     <Download className="h-4 w-4" />
                                   </Button>
-                                  <Button 
-                                    size="icon" 
-                                    variant="ghost" 
-                                    className="h-8 w-8" 
-                                    onClick={() => startEdit(store)}
-                                    title="Düzenle"
-                                  >
+                                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => startEdit(store)}>
                                     <Edit2 className="h-4 w-4" />
                                   </Button>
                                   <Button 
                                     size="icon" 
                                     variant="ghost" 
-                                    className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/50" 
+                                    className="h-8 w-8 text-red-600 hover:text-red-700" 
                                     onClick={() => deleteStore(store.id)}
-                                    title="Sil"
                                   >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
@@ -407,20 +369,14 @@ export default function StoresPage() {
                       {/* Empty State */}
                       {stores.length === 0 && !isAdding && (
                         <TableRow>
-                          <TableCell colSpan={6} className="h-64 text-center">
-                            <div className="flex flex-col items-center justify-center gap-4">
-                              <StoreIcon className="h-12 w-12 text-gray-400" />
-                              <div>
-                                <p className="text-base font-medium text-gray-900 dark:text-gray-100 mb-1">Henüz mağaza eklenmemiş</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">İlk mağazanızı ekleyerek başlayın</p>
-                                <Button 
-                                  onClick={() => setIsAdding(true)} 
-                                  disabled={!backendOnline}
-                                >
-                                  <Plus className="mr-2 h-4 w-4" />
-                                  İlk Mağazanızı Ekleyin
-                                </Button>
-                              </div>
+                          <TableCell colSpan={6} className="h-32 text-center">
+                            <div className="flex flex-col items-center justify-center gap-2">
+                              <StoreIcon className="h-8 w-8 text-gray-300" />
+                              <p className="text-sm text-gray-500">Henüz mağaza eklenmemiş</p>
+                              <Button size="sm" variant="outline" onClick={() => setIsAdding(true)} disabled={!backendOnline}>
+                                <Plus className="mr-2 h-4 w-4" />
+                                İlk Mağazanızı Ekleyin
+                              </Button>
                             </div>
                           </TableCell>
                         </TableRow>

@@ -1,17 +1,12 @@
 import type { Metadata } from 'next'
-import { Inter, Poppins } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const poppins = Poppins({ 
-  subsets: ['latin'], 
-  weight: ['300', '400', '500', '600', '700', '800'],
-  variable: '--font-poppins'
-})
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'EtsyMultiLister | AI-Powered Multi-Store Content Generator',
-  description: 'Create stunning Etsy listings for multiple stores with AI-powered content generation',
+  title: 'EtsyMultiLister | Multi-Store Content Generator',
+  description: 'Multi-store product manager and content generator for Etsy sellers',
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -31,7 +26,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
       </head>
-      <body className={`${inter.variable} ${poppins.variable} font-sans antialiased`}>{children}</body>
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }
