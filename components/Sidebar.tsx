@@ -42,19 +42,19 @@ export default function Sidebar() {
   }, [])
 
   return (
-    <div className="flex h-screen w-64 flex-col border-r bg-white">
+    <div className="flex h-screen w-64 flex-col border-r-4 border-black bg-white">
       {/* Logo */}
-      <div className="flex h-16 items-center border-b px-5">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white font-bold text-sm">
+      <div className="flex h-20 items-center border-b-4 border-black px-6 bg-yellow-400">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center border-4 border-black bg-white font-bold text-xl shadow-brutal-sm">
             E
           </div>
-          <span className="text-lg font-semibold text-gray-900">EtsyMultiLister</span>
+          <span className="text-lg font-bold uppercase tracking-tight">Etsy<br/>MultiLister</span>
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-1">
+      <nav className="flex-1 p-4 space-y-2">
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href
@@ -63,10 +63,10 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "flex items-center gap-3 border-4 border-black px-4 py-3 font-bold uppercase text-sm transition-all",
                 isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  ? "bg-yellow-400 shadow-brutal translate-x-0 translate-y-0"
+                  : "bg-white hover:bg-yellow-400 hover:shadow-brutal hover:-translate-x-1 hover:-translate-y-1"
               )}
             >
               <Icon className="h-5 w-5" />
@@ -77,14 +77,14 @@ export default function Sidebar() {
       </nav>
 
       {/* Status */}
-      <div className="border-t p-4">
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+      <div className="border-t-4 border-black p-4 bg-white">
+        <div className="flex items-center gap-3 border-4 border-black px-4 py-3 bg-white font-bold text-xs uppercase">
           <div className={cn(
-            "h-2 w-2 rounded-full",
-            backendOnline ? "bg-green-500" : backendOnline === false ? "bg-red-500" : "bg-gray-300"
+            "h-4 w-4 border-2 border-black",
+            backendOnline ? "bg-green-400" : backendOnline === false ? "bg-red-500" : "bg-gray-300"
           )} />
           <span>
-            {backendOnline ? "Bağlı" : backendOnline === false ? "Bağlantı yok" : "Kontrol ediliyor..."}
+            {backendOnline ? "ONLINE" : backendOnline === false ? "OFFLINE" : "..."}
           </span>
         </div>
       </div>

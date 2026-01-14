@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'EtsyMultiLister | Multi-Store Content Generator',
@@ -26,7 +26,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={jetbrainsMono.className}>{children}</body>
     </html>
   )
 }

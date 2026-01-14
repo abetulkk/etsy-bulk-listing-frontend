@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import Sidebar from "@/components/Sidebar"
-import Header from "@/components/Header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -81,7 +80,9 @@ export default function StoresPage() {
     if (!editingId || !backendOnline) return
     
     try {
-      const updated = await storesApi.update(editingId, editForm)
+      // Sadece güncellenebilir alanları gönder (id, createdAt, updatedAt hariç)
+      const { id, createdAt, updatedAt, ...updateData } = editForm as Store
+      const updated = await storesApi.update(editingId, updateData)
       setStores(prev => prev.map(s => s.id === editingId ? updated : s))
       setEditingId(null)
       setEditForm({})
@@ -151,60 +152,61 @@ export default function StoresPage() {
   ]
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-white">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header />
         {!isClient ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-gray-500">Yükleniyor...</div>
+            <div className="font-bold uppercase">Yükleniyor...</div>
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto p-6">
-            <div className="mx-auto max-w-5xl space-y-6">
-              {/* Backend Status */}
-              {backendOnline === false && (
-                <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
-                  <AlertCircle className="h-5 w-5 text-red-600" />
-                  <div>
-                    <p className="font-medium text-red-800">Backend servisi çalışmıyor</p>
-                    <p className="text-sm text-red-600">
-                      Backend klasöründe <code className="rounded bg-red-100 px-1.5 py-0.5 text-xs">make up</code> komutunu çalıştırın
-                    </p>
-                  </div>
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="mx-auto max-w-6xl space-y-6">
+            {/* Backend Status */}
+            {backendOnline === false && (
+              <div className="flex items-center gap-4 border-4 border-black bg-red-500 p-4 shadow-brutal font-bold uppercase">
+                <AlertCircle className="h-6 w-6" />
+                <div>
+                  <p className="text-sm">Backend servisi çalışmıyor</p>
+                  <p className="text-xs mt-1 font-normal normal-case">
+                    Backend klasöründe <code className="border-2 border-black bg-white px-2 py-0.5 text-xs">make up</code> komutunu çalıştırın
+                  </p>
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* Stores Table */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                  <div>
-                    <CardTitle className="text-base font-medium">Mağazalar</CardTitle>
-                    <CardDescription>{stores.length} mağaza</CardDescription>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {stores.length > 0 && (
-                      <Button 
-                        size="sm"
-                        variant="outline"
-                        onClick={handleExportAll}
-                      >
-                        <FileDown className="mr-2 h-4 w-4" />
-                        Tümünü Export
-                      </Button>
-                    )}
+            {/* Stores Table */}
+            <div className="border-4 border-black bg-white shadow-brutal">
+              <div className="flex items-center justify-between p-6 border-b-4 border-black">
+                <div>
+                  <h1 className="text-xl font-bold uppercase">Mağazalar</h1>
+                  <p className="text-sm mt-1">{stores.length} mağaza</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {stores.length > 0 && (
                     <Button 
                       size="sm"
-                      onClick={() => setIsAdding(true)}
-                      disabled={!backendOnline || isAdding}
+                      variant="outline"
+                      onClick={handleExportAll}
+                      className="border-4 border-black bg-white hover:bg-yellow-400 font-bold uppercase shadow-brutal-sm"
                     >
-                      <Plus className="mr-2 h-4 w-4" />
-                      Yeni Mağaza
+                      <FileDown className="mr-2 h-4 w-4" />
+                      Export Tümü
                     </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <Table>
+                  )}
+                  <Button 
+                    size="sm"
+                    onClick={() => setIsAdding(true)}
+                    disabled={!backendOnline || isAdding}
+                    className="border-4 border-black bg-yellow-400 hover:bg-yellow-500 font-bold uppercase shadow-brutal-sm"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Yeni Mağaza
+                  </Button>
+                </div>
+              </div>
+              <div>
+                <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Mağaza Adı</TableHead>
@@ -383,8 +385,8 @@ export default function StoresPage() {
                       )}
                     </TableBody>
                   </Table>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           </div>
         )}

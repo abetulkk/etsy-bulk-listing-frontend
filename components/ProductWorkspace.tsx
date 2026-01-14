@@ -265,16 +265,16 @@ export default function ProductWorkspace() {
   const readyStoresCount = stores.filter(s => isStoreReady(s.id)).length
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
-      <div className="mx-auto max-w-5xl space-y-6">
+    <div className="flex-1 overflow-y-auto p-6 bg-white">
+      <div className="mx-auto max-w-6xl space-y-6">
         {/* Backend Status */}
         {backendOnline === false && (
-          <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
-            <AlertCircle className="h-5 w-5 text-red-600" />
+          <div className="flex items-center gap-4 border-4 border-black bg-red-500 p-4 shadow-brutal font-bold uppercase">
+            <AlertCircle className="h-6 w-6" />
             <div>
-              <p className="font-medium text-red-800">Backend servisi çalışmıyor</p>
-              <p className="text-sm text-red-600">
-                Backend klasöründe <code className="rounded bg-red-100 px-1.5 py-0.5 text-xs">make up</code> komutunu çalıştırın
+              <p className="text-sm">Backend servisi çalışmıyor</p>
+              <p className="text-xs mt-1 font-normal normal-case">
+                Backend klasöründe <code className="border-2 border-black bg-white px-2 py-0.5 text-xs">make up</code> komutunu çalıştırın
               </p>
             </div>
           </div>
@@ -282,27 +282,27 @@ export default function ProductWorkspace() {
 
         {/* No Stores Warning */}
         {stores.length === 0 && backendOnline && (
-          <div className="flex items-center gap-3 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-            <AlertCircle className="h-5 w-5 text-yellow-600" />
+          <div className="flex items-center gap-4 border-4 border-black bg-yellow-400 p-4 shadow-brutal font-bold uppercase">
+            <AlertCircle className="h-6 w-6" />
             <div>
-              <p className="font-medium text-yellow-800">Mağaza bulunamadı</p>
-              <p className="text-sm text-yellow-600">
-                Lütfen önce <a href="/stores" className="underline font-medium">Mağazalar</a> sayfasından mağaza ekleyin
+              <p className="text-sm">Mağaza bulunamadı</p>
+              <p className="text-xs mt-1 font-normal normal-case">
+                Lütfen önce <a href="/stores" className="underline font-bold">Mağazalar</a> sayfasından mağaza ekleyin
               </p>
             </div>
           </div>
         )}
 
         {/* Stats Bar */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6 text-sm">
-            <div>
-              <span className="text-gray-500">Mağaza:</span>
-              <span className="ml-1.5 font-semibold text-gray-900">{stores.length}</span>
+        <div className="flex items-center justify-between border-4 border-black bg-white p-4 shadow-brutal">
+          <div className="flex items-center gap-8 text-sm font-bold uppercase">
+            <div className="flex items-center gap-2">
+              <span className="text-black">Mağaza:</span>
+              <span className="bg-yellow-400 border-2 border-black px-3 py-1">{stores.length}</span>
             </div>
-            <div>
-              <span className="text-gray-500">Hazır:</span>
-              <span className="ml-1.5 font-semibold text-gray-900">{readyStoresCount}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-black">Hazır:</span>
+              <span className="bg-yellow-400 border-2 border-black px-3 py-1">{readyStoresCount}</span>
             </div>
           </div>
           {currentProductId && readyStoresCount > 0 && (
@@ -310,50 +310,54 @@ export default function ProductWorkspace() {
               onClick={handleExportProduct}
               variant="outline"
               size="sm"
+              className="border-4 border-black bg-white hover:bg-yellow-400 font-bold uppercase shadow-brutal-sm hover:-translate-x-0.5 hover:-translate-y-0.5"
             >
               <FileDown className="mr-2 h-4 w-4" />
-              Tümünü Export Et
+              Export Tümü
             </Button>
           )}
         </div>
 
         {/* Image & Description */}
         <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-700">Ürün Görseli</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="border-4 border-black bg-white p-6 shadow-brutal">
+            <h3 className="text-sm font-bold uppercase mb-4 bg-yellow-400 border-2 border-black px-2 py-1 inline-block">
+              Ürün Görseli
+            </h3>
+            <div className="mt-4">
               <ImageUpload
                 label=""
                 value={productData.mainImage}
                 onChange={handleImageChange}
                 onRemove={() => handleImageChange(undefined)}
               />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-700">Ürün Açıklaması (Opsiyonel)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={productDescription}
-                onChange={(e) => setProductDescription(e.target.value)}
-                placeholder="Ürün özelliklerini, malzemelerini, boyutlarını yazın..."
-                rows={8}
-                className="resize-none text-sm"
-              />
-            </CardContent>
-          </Card>
+          <div className="border-4 border-black bg-white p-6 shadow-brutal">
+            <h3 className="text-sm font-bold uppercase mb-4 bg-yellow-400 border-2 border-black px-2 py-1 inline-block">
+              Ürün Açıklaması (Opsiyonel)
+            </h3>
+            <Textarea
+              value={productDescription}
+              onChange={(e) => setProductDescription(e.target.value)}
+              placeholder="Ürün özelliklerini, malzemelerini, boyutlarını yazın..."
+              rows={8}
+              className="resize-none text-sm border-4 border-black mt-4 focus:ring-4 focus:ring-yellow-400"
+            />
+          </div>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center justify-center gap-4">
           {currentProductId && (
-            <Button variant="outline" onClick={startNewProduct} size="sm">
-              <X className="mr-2 h-4 w-4" />
+            <Button 
+              variant="outline" 
+              onClick={startNewProduct} 
+              size="default"
+              className="border-4 border-black bg-white hover:bg-gray-100 font-bold uppercase shadow-brutal hover:-translate-x-1 hover:-translate-y-1 transition-all"
+            >
+              <X className="mr-2 h-5 w-5" />
               Yeni Ürün
             </Button>
           )}
@@ -361,15 +365,16 @@ export default function ProductWorkspace() {
             onClick={generateContent}
             disabled={!productData.mainImage || isGenerating || !backendOnline || stores.length === 0}
             size="default"
+            className="border-4 border-black bg-yellow-400 hover:bg-yellow-500 font-bold uppercase shadow-brutal-lg hover:-translate-x-1 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed px-8 py-6 text-lg"
           >
             {isGenerating ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Üretiliyor...
               </>
             ) : (
               <>
-                <Sparkles className="mr-2 h-4 w-4" />
+                <Sparkles className="mr-2 h-5 w-5" />
                 İçerik Oluştur
               </>
             )}
@@ -378,9 +383,9 @@ export default function ProductWorkspace() {
 
         {/* Store Results */}
         {stores.length > 0 && (
-          <div className="space-y-3">
-            <h2 className="text-sm font-medium text-gray-700 flex items-center gap-2">
-              <StoreIcon className="h-4 w-4" />
+          <div className="space-y-4">
+            <h2 className="text-lg font-bold uppercase flex items-center gap-2 bg-yellow-400 border-4 border-black px-4 py-2 shadow-brutal inline-block">
+              <StoreIcon className="h-5 w-5" />
               Mağaza Çıktıları
             </h2>
             
@@ -391,23 +396,23 @@ export default function ProductWorkspace() {
               const isExpanded = expandedStores.has(store.id)
 
               return (
-                <Card key={store.id} className="overflow-hidden">
-                  <CardHeader 
-                    className="cursor-pointer py-4 hover:bg-gray-50 transition-colors"
+                <div key={store.id} className="border-4 border-black bg-white shadow-brutal">
+                  <div 
+                    className="cursor-pointer p-4 hover:bg-yellow-400 transition-colors"
                     onClick={() => toggleStore(store.id)}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-4">
                         {status === "GENERATING" ? (
-                          <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+                          <Loader2 className="h-6 w-6 animate-spin" />
                         ) : isReady ? (
-                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          <CheckCircle2 className="h-6 w-6 bg-green-400 border-2 border-black p-0.5" />
                         ) : (
-                          <Circle className="h-4 w-4 text-gray-300" />
+                          <Circle className="h-6 w-6 border-2 border-black" />
                         )}
                         <div>
-                          <CardTitle className="text-sm font-medium">{store.name}</CardTitle>
-                          <p className="text-xs text-gray-500 mt-0.5">
+                          <h3 className="text-sm font-bold uppercase">{store.name}</h3>
+                          <p className="text-xs font-normal mt-1">
                             {store.concept || "Konsept yok"}
                           </p>
                         </div>
@@ -418,87 +423,87 @@ export default function ProductWorkspace() {
                             size="sm"
                             variant="ghost"
                             onClick={(e) => { e.stopPropagation(); handleExportStore(store.id) }}
-                            className="h-8 text-xs"
+                            className="h-8 text-xs border-2 border-black bg-white hover:bg-yellow-400 font-bold uppercase"
                           >
                             <Download className="mr-1.5 h-3.5 w-3.5" />
                             Export
                           </Button>
                         )}
                         {isExpanded ? (
-                          <ChevronUp className="h-4 w-4 text-gray-400" />
+                          <ChevronUp className="h-5 w-5" />
                         ) : (
-                          <ChevronDown className="h-4 w-4 text-gray-400" />
+                          <ChevronDown className="h-5 w-5" />
                         )}
                       </div>
                     </div>
-                  </CardHeader>
+                  </div>
 
                   {isExpanded && storeContent && storeContent.title && (
-                    <CardContent className="border-t bg-gray-50/50 pt-4 space-y-4">
+                    <div className="border-t-4 border-black bg-gray-50 p-4 space-y-3">
                       {/* Title */}
-                      <div className="bg-white rounded-lg p-3 border">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <p className="text-xs font-medium text-gray-500 uppercase">Başlık</p>
+                      <div className="bg-white border-4 border-black p-3 shadow-brutal-sm">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-xs font-bold uppercase bg-yellow-400 px-2 py-1 border-2 border-black">Başlık</p>
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => copyToClipboard(storeContent.title, `${store.id}-title`)}
-                            className="h-6 w-6 p-0"
+                            className="h-8 w-8 p-0 border-2 border-black hover:bg-yellow-400"
                           >
                             {copiedStoreId === `${store.id}-title` ? (
-                              <Check className="h-3 w-3 text-green-500" />
+                              <Check className="h-4 w-4" />
                             ) : (
-                              <Copy className="h-3 w-3 text-gray-400" />
+                              <Copy className="h-4 w-4" />
                             )}
                           </Button>
                         </div>
-                        <p className="text-sm text-gray-900">{storeContent.title}</p>
+                        <p className="text-sm font-medium">{storeContent.title}</p>
                       </div>
 
                       {/* Description */}
-                      <div className="bg-white rounded-lg p-3 border">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <p className="text-xs font-medium text-gray-500 uppercase">Açıklama</p>
+                      <div className="bg-white border-4 border-black p-3 shadow-brutal-sm">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-xs font-bold uppercase bg-yellow-400 px-2 py-1 border-2 border-black">Açıklama</p>
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => copyToClipboard(storeContent.description, `${store.id}-desc`)}
-                            className="h-6 w-6 p-0"
+                            className="h-8 w-8 p-0 border-2 border-black hover:bg-yellow-400"
                           >
                             {copiedStoreId === `${store.id}-desc` ? (
-                              <Check className="h-3 w-3 text-green-500" />
+                              <Check className="h-4 w-4" />
                             ) : (
-                              <Copy className="h-3 w-3 text-gray-400" />
+                              <Copy className="h-4 w-4" />
                             )}
                           </Button>
                         </div>
-                        <p className="text-sm text-gray-700 whitespace-pre-wrap">{storeContent.description}</p>
+                        <p className="text-sm whitespace-pre-wrap">{storeContent.description}</p>
                       </div>
 
                       {/* Tags */}
-                      <div className="bg-white rounded-lg p-3 border">
+                      <div className="bg-white border-4 border-black p-3 shadow-brutal-sm">
                         <div className="flex items-center justify-between mb-2">
-                          <p className="text-xs font-medium text-gray-500 uppercase">
+                          <p className="text-xs font-bold uppercase bg-yellow-400 px-2 py-1 border-2 border-black">
                             Etiketler ({storeContent.tags.length})
                           </p>
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => copyToClipboard(storeContent.tags.join(", "), `${store.id}-tags`)}
-                            className="h-6 w-6 p-0"
+                            className="h-8 w-8 p-0 border-2 border-black hover:bg-yellow-400"
                           >
                             {copiedStoreId === `${store.id}-tags` ? (
-                              <Check className="h-3 w-3 text-green-500" />
+                              <Check className="h-4 w-4" />
                             ) : (
-                              <Copy className="h-3 w-3 text-gray-400" />
+                              <Copy className="h-4 w-4" />
                             )}
                           </Button>
                         </div>
-                        <div className="flex flex-wrap gap-1.5">
+                        <div className="flex flex-wrap gap-2">
                           {storeContent.tags.map((tag, i) => (
                             <span 
                               key={i} 
-                              className="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700"
+                              className="px-2 py-1 text-xs font-bold border-2 border-black bg-white"
                             >
                               {tag}
                             </span>
@@ -508,21 +513,21 @@ export default function ProductWorkspace() {
 
                       {/* Images */}
                       {storeContent.images && storeContent.images.length > 0 && (
-                        <div className="bg-white rounded-lg p-3 border">
-                          <p className="text-xs font-medium text-gray-500 uppercase mb-2">
+                        <div className="bg-white border-4 border-black p-3 shadow-brutal-sm">
+                          <p className="text-xs font-bold uppercase bg-yellow-400 px-2 py-1 border-2 border-black mb-3 inline-block">
                             Görseller ({storeContent.images.length})
                           </p>
-                          <div className="grid grid-cols-4 gap-2">
+                          <div className="grid grid-cols-4 gap-3">
                             {storeContent.images.map((url, idx) => (
-                              <div key={idx} className="relative aspect-square">
+                              <div key={idx} className="relative aspect-square border-4 border-black shadow-brutal-sm">
                                 <img 
                                   src={url} 
                                   alt={`${store.name} - ${idx + 1}`}
-                                  className="w-full h-full rounded object-cover border"
+                                  className="w-full h-full object-cover"
                                 />
                                 {idx === 0 && (
-                                  <div className="absolute top-1 right-1 px-1.5 py-0.5 text-[10px] font-medium rounded bg-primary text-white">
-                                    Ana
+                                  <div className="absolute top-1 right-1 px-2 py-0.5 text-[10px] font-bold border-2 border-black bg-yellow-400">
+                                    ANA
                                   </div>
                                 )}
                               </div>
@@ -530,9 +535,9 @@ export default function ProductWorkspace() {
                           </div>
                         </div>
                       )}
-                    </CardContent>
+                    </div>
                   )}
-                </Card>
+                </div>
               )
             })}
           </div>

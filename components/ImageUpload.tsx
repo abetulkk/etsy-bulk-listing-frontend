@@ -56,15 +56,15 @@ export default function ImageUpload({ label, value, onChange, onRemove }: ImageU
 
   return (
     <div className="space-y-2">
-      {label && <label className="text-sm font-medium">{label}</label>}
+      {label && <label className="text-sm font-bold uppercase">{label}</label>}
       {value ? (
         <div className="relative group">
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-muted">
+          <div className="relative aspect-video w-full overflow-hidden border-4 border-black bg-gray-100 shadow-brutal-sm">
             <img src={value} alt={label} className="h-full w-full object-cover" />
           </div>
           <button
             onClick={onRemove}
-            className="absolute top-2 right-2 rounded-full bg-background p-1.5 shadow-sm border opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute top-2 right-2 bg-red-500 text-white p-2 border-2 border-black opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
           >
             <X className="h-4 w-4" />
           </button>
@@ -78,30 +78,30 @@ export default function ImageUpload({ label, value, onChange, onRemove }: ImageU
           }}
           onDragLeave={() => setIsDragging(false)}
           className={cn(
-            "cursor-pointer border-2 border-dashed rounded-lg transition-colors",
+            "cursor-pointer border-4 border-dashed border-black transition-colors",
             isDragging 
-              ? "border-primary bg-primary/5" 
-              : "border-muted-foreground/25 hover:border-muted-foreground/50",
+              ? "bg-yellow-400/20" 
+              : "bg-white hover:bg-gray-50",
             isUploading && "pointer-events-none opacity-50"
           )}
         >
           <div className="flex flex-col items-center justify-center p-8">
             <div className={cn(
-              "mb-3 p-3 rounded-full",
-              isDragging ? "bg-primary/10" : "bg-muted"
+              "mb-4 p-4 border-4 border-black",
+              isDragging ? "bg-yellow-400" : "bg-white"
             )}>
               {isUploading ? (
-                <Loader2 className="h-6 w-6 text-primary animate-spin" />
+                <Loader2 className="h-8 w-8 animate-spin" />
               ) : isDragging ? (
-                <Upload className="h-6 w-6 text-primary" />
+                <Upload className="h-8 w-8" />
               ) : (
-                <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                <ImageIcon className="h-8 w-8" />
               )}
             </div>
-            <p className="text-sm font-medium mb-1">
+            <p className="text-sm font-bold uppercase mb-1">
               {isUploading ? "Yükleniyor..." : isDragging ? "Bırakın" : "Görsel sürükleyin"}
             </p>
-            <p className="text-xs text-muted-foreground mb-3">veya</p>
+            <p className="text-xs mb-4">veya</p>
             <div>
               <input
                 type="file"
@@ -121,7 +121,7 @@ export default function ImageUpload({ label, value, onChange, onRemove }: ImageU
                 Dosya Seç
               </Button>
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
+            <p className="mt-4 text-xs uppercase font-bold">
               PNG, JPG, WEBP - max 10MB
             </p>
           </div>

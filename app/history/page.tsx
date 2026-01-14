@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import Sidebar from "@/components/Sidebar"
-import Header from "@/components/Header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { History as HistoryIcon, Package, Clock, CheckCircle2, AlertCircle, Trash2, Image as ImageIcon, X, Eye, Download } from "lucide-react"
@@ -100,58 +99,72 @@ export default function HistoryPage() {
     const store = stores.find(s => s.id === selectedStoreProduct.storeId)
 
     return (
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setSelectedStoreProduct(null)}>
-        <div className="bg-background rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden border" onClick={e => e.stopPropagation()}>
-          <div className="flex items-center justify-between p-4 border-b">
+      <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setSelectedStoreProduct(null)}>
+        <div className="bg-white border-4 border-black shadow-brutal-lg max-w-2xl w-full max-h-[90vh] overflow-hidden" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center justify-between p-4 border-b-4 border-black bg-yellow-400">
             <div>
-              <h2 className="font-semibold">{store?.name || "Mağaza"}</h2>
-              <p className="text-sm text-muted-foreground">{store?.concept}</p>
+              <h2 className="font-bold uppercase">{store?.name || "Mağaza"}</h2>
+              <p className="text-sm mt-1">{store?.concept}</p>
             </div>
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline" onClick={() => exportToCSV(selectedStoreProduct)}>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={() => exportToCSV(selectedStoreProduct)}
+                className="border-2 border-black bg-white hover:bg-black hover:text-white font-bold uppercase"
+              >
                 <Download className="h-4 w-4 mr-2" />
                 CSV
               </Button>
-              <Button size="icon" variant="ghost" onClick={() => setSelectedStoreProduct(null)}>
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                onClick={() => setSelectedStoreProduct(null)}
+                className="h-8 w-8 border-2 border-black hover:bg-red-500 hover:text-white"
+              >
                 <X className="h-4 w-4" />
               </Button>
             </div>
           </div>
           
-          <div className="p-4 overflow-y-auto max-h-[calc(90vh-80px)] space-y-4">
-            <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1">BAŞLIK</p>
-              <p className="text-sm bg-muted p-2 rounded">{selectedStoreProduct.title || "—"}</p>
+          <div className="p-4 overflow-y-auto max-h-[calc(90vh-80px)] space-y-3 bg-gray-50">
+            <div className="bg-white border-4 border-black p-3 shadow-brutal-sm">
+              <p className="text-xs font-bold uppercase bg-yellow-400 px-2 py-1 border-2 border-black mb-2 inline-block">BAŞLIK</p>
+              <p className="text-sm font-medium">{selectedStoreProduct.title || "—"}</p>
             </div>
 
-            <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1">AÇIKLAMA</p>
-              <p className="text-sm bg-muted p-2 rounded whitespace-pre-wrap max-h-32 overflow-y-auto">
+            <div className="bg-white border-4 border-black p-3 shadow-brutal-sm">
+              <p className="text-xs font-bold uppercase bg-yellow-400 px-2 py-1 border-2 border-black mb-2 inline-block">AÇIKLAMA</p>
+              <p className="text-sm whitespace-pre-wrap max-h-32 overflow-y-auto">
                 {selectedStoreProduct.description || "—"}
               </p>
             </div>
 
-            <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1">TAGLER ({selectedStoreProduct.tags?.length || 0})</p>
-              <div className="flex flex-wrap gap-1">
+            <div className="bg-white border-4 border-black p-3 shadow-brutal-sm">
+              <p className="text-xs font-bold uppercase bg-yellow-400 px-2 py-1 border-2 border-black mb-2 inline-block">
+                TAGLER ({selectedStoreProduct.tags?.length || 0})
+              </p>
+              <div className="flex flex-wrap gap-2">
                 {(selectedStoreProduct.tags || []).map((tag: string, i: number) => (
-                  <span key={i} className="text-xs bg-secondary px-2 py-1 rounded">{tag}</span>
+                  <span key={i} className="text-xs border-2 border-black px-2 py-1 font-bold">{tag}</span>
                 ))}
                 {(!selectedStoreProduct.tags || selectedStoreProduct.tags.length === 0) && (
-                  <span className="text-sm text-muted-foreground">—</span>
+                  <span className="text-sm">—</span>
                 )}
               </div>
             </div>
 
-            <div>
-              <p className="text-xs font-medium text-muted-foreground mb-2">GÖRSELLER ({selectedStoreProduct.images?.length || 0})</p>
+            <div className="bg-white border-4 border-black p-3 shadow-brutal-sm">
+              <p className="text-xs font-bold uppercase bg-yellow-400 px-2 py-1 border-2 border-black mb-3 inline-block">
+                GÖRSELLER ({selectedStoreProduct.images?.length || 0})
+              </p>
               <div className="grid grid-cols-3 gap-2">
                 {(selectedStoreProduct.images || []).map((url: string, idx: number) => (
-                  <div key={idx} className="relative">
-                    <img src={url} alt="" className="aspect-square rounded object-cover border" />
+                  <div key={idx} className="relative border-4 border-black">
+                    <img src={url} alt="" className="aspect-square object-cover" />
                     {idx === 0 && (
-                      <span className="absolute top-1 left-1 bg-primary text-primary-foreground text-[10px] font-medium px-1.5 py-0.5 rounded">
-                        Primary
+                      <span className="absolute top-1 left-1 bg-yellow-400 border-2 border-black text-[10px] font-bold px-2 py-0.5">
+                        PRIMARY
                       </span>
                     )}
                   </div>
@@ -165,141 +178,141 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-white">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header />
         {!isClient ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-muted-foreground">Yükleniyor...</div>
+            <div className="font-bold uppercase">Yükleniyor...</div>
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto p-6">
-            <div className="mx-auto max-w-5xl space-y-6">
-              {/* Backend Status */}
-              {backendOnline === false && (
-                <div className="flex items-center gap-3 rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-                  <AlertCircle className="h-5 w-5 text-destructive" />
-                  <div>
-                    <p className="font-medium text-destructive">Backend servisi çalışmıyor</p>
-                    <p className="text-sm text-muted-foreground">
-                      Backend klasöründe <code className="rounded bg-muted px-1.5 py-0.5 text-xs">make up</code> komutunu çalıştırın
-                    </p>
-                  </div>
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="mx-auto max-w-6xl space-y-6">
+            {/* Backend Status */}
+            {backendOnline === false && (
+              <div className="flex items-center gap-4 border-4 border-black bg-red-500 p-4 shadow-brutal font-bold uppercase">
+                <AlertCircle className="h-6 w-6" />
+                <div>
+                  <p className="text-sm">Backend servisi çalışmıyor</p>
+                  <p className="text-xs mt-1 font-normal normal-case">
+                    Backend klasöründe <code className="border-2 border-black bg-white px-2 py-0.5 text-xs">make up</code> komutunu çalıştırın
+                  </p>
                 </div>
-              )}
-
-              {/* Header */}
-              <div>
-                <h1 className="text-2xl font-semibold tracking-tight">Geçmiş</h1>
-                <p className="text-muted-foreground">Üretim geçmişinizi görüntüleyin</p>
               </div>
+            )}
 
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-4">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardDescription>Toplam Ürün</CardDescription>
-                    <CardTitle className="text-2xl">{products.length}</CardTitle>
-                  </CardHeader>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardDescription>Toplam Görsel</CardDescription>
-                    <CardTitle className="text-2xl">{totalImages}</CardTitle>
-                  </CardHeader>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardDescription>Mağaza</CardDescription>
-                    <CardTitle className="text-2xl">{stores.length}</CardTitle>
-                  </CardHeader>
-                </Card>
+            {/* Header */}
+            <div>
+              <h1 className="text-2xl font-bold uppercase">Geçmiş</h1>
+              <p className="text-sm mt-1">Üretim geçmişinizi görüntüleyin</p>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="border-4 border-black bg-white p-4 shadow-brutal">
+                <p className="text-xs font-bold uppercase mb-2">Toplam Ürün</p>
+                <p className="text-3xl font-bold">{products.length}</p>
               </div>
+              <div className="border-4 border-black bg-white p-4 shadow-brutal">
+                <p className="text-xs font-bold uppercase mb-2">Toplam Görsel</p>
+                <p className="text-3xl font-bold">{totalImages}</p>
+              </div>
+              <div className="border-4 border-black bg-white p-4 shadow-brutal">
+                <p className="text-xs font-bold uppercase mb-2">Mağaza</p>
+                <p className="text-3xl font-bold">{stores.length}</p>
+              </div>
+            </div>
 
-              {/* Products */}
-              {products.length > 0 ? (
-                <div className="space-y-3">
-                  <h2 className="text-lg font-semibold">Ürünler</h2>
-                  
-                  {products.map((product) => (
-                    <Card key={product.id}>
-                      <CardContent className="p-4">
-                        <div className="flex items-start gap-4">
-                          {product.mainImageUrl ? (
-                            <img src={product.mainImageUrl} alt="" className="w-16 h-16 rounded object-cover border" />
-                          ) : (
-                            <div className="w-16 h-16 rounded bg-muted flex items-center justify-center">
-                              <ImageIcon className="h-6 w-6 text-muted-foreground" />
+            {/* Products */}
+            {products.length > 0 ? (
+              <div className="space-y-4">
+                <h2 className="text-lg font-bold uppercase bg-yellow-400 border-4 border-black px-4 py-2 shadow-brutal inline-block">
+                  Ürünler
+                </h2>
+                
+                {products.map((product) => (
+                  <div key={product.id} className="border-4 border-black bg-white shadow-brutal">
+                    <div className="p-4">
+                      <div className="flex items-start gap-4">
+                        {product.mainImageUrl ? (
+                          <img src={product.mainImageUrl} alt="" className="w-20 h-20 object-cover border-4 border-black" />
+                        ) : (
+                          <div className="w-20 h-20 border-4 border-black bg-gray-100 flex items-center justify-center">
+                            <ImageIcon className="h-8 w-8" />
+                          </div>
+                        )}
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <h3 className="font-bold truncate">
+                                {product.name || `Ürün #${product.id.slice(0, 8)}`}
+                              </h3>
+                              <div className="flex items-center gap-3 mt-2 text-sm">
+                                <span className="flex items-center gap-1">
+                                  <Clock className="h-4 w-4" />
+                                  {new Date(product.createdAt).toLocaleDateString('tr-TR')}
+                                </span>
+                                <span className="bg-yellow-400 border-2 border-black px-2 py-0.5 font-bold text-xs">
+                                  {(product.stores || []).length} mağaza
+                                </span>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 border-2 border-black hover:bg-red-500 hover:text-white"
+                              onClick={() => deleteProduct(product.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+
+                          {(product.stores || []).length > 0 && (
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              {(product.stores || []).map((sp) => (
+                                <button
+                                  key={sp.storeId}
+                                  className="flex items-center gap-2 border-2 border-black px-3 py-1.5 text-sm hover:bg-yellow-400 transition-colors font-medium"
+                                  onClick={() => setSelectedStoreProduct(sp)}
+                                >
+                                  {sp.status === "COMPLETED" ? (
+                                    <CheckCircle2 className="h-4 w-4 bg-green-400 border border-black" />
+                                  ) : (
+                                    <div className="h-4 w-4 border-2 border-black" />
+                                  )}
+                                  <span className="font-bold">{getStoreName(sp.storeId)}</span>
+                                  <span>·</span>
+                                  <span>{sp.images?.length || 0}</span>
+                                  <Eye className="h-4 w-4" />
+                                </button>
+                              ))}
                             </div>
                           )}
-
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2">
-                              <div>
-                                <h3 className="font-medium truncate">
-                                  {product.name || `Ürün #${product.id.slice(0, 8)}`}
-                                </h3>
-                                <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-                                  <span className="flex items-center gap-1">
-                                    <Clock className="h-3.5 w-3.5" />
-                                    {new Date(product.createdAt).toLocaleDateString('tr-TR')}
-                                  </span>
-                                  <span>{(product.stores || []).length} mağaza</span>
-                                </div>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-destructive hover:text-destructive"
-                                onClick={() => deleteProduct(product.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-
-                            {(product.stores || []).length > 0 && (
-                              <div className="mt-3 flex flex-wrap gap-2">
-                                {(product.stores || []).map((sp) => (
-                                  <button
-                                    key={sp.storeId}
-                                    className="flex items-center gap-2 rounded border px-2.5 py-1.5 text-sm hover:bg-secondary transition-colors"
-                                    onClick={() => setSelectedStoreProduct(sp)}
-                                  >
-                                    {sp.status === "COMPLETED" ? (
-                                      <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
-                                    ) : (
-                                      <div className="h-3.5 w-3.5 rounded-full border-2 border-muted-foreground" />
-                                    )}
-                                    <span>{getStoreName(sp.storeId)}</span>
-                                    <span className="text-muted-foreground">·</span>
-                                    <span className="text-muted-foreground">{sp.images?.length || 0}</span>
-                                    <Eye className="h-3 w-3 text-muted-foreground" />
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="border-4 border-black bg-white shadow-brutal">
+                <div className="flex flex-col items-center justify-center py-12 px-4">
+                  <HistoryIcon className="h-16 w-16 mb-4 border-4 border-black p-2" />
+                  <h3 className="text-lg font-bold uppercase mb-2">Henüz geçmiş yok</h3>
+                  <p className="text-sm mb-6">Dashboard'dan ilk ürününüzü oluşturun</p>
+                  <Button 
+                    asChild
+                    className="border-4 border-black bg-yellow-400 hover:bg-yellow-500 font-bold uppercase shadow-brutal"
+                  >
+                    <a href="/">Dashboard'a Git</a>
+                  </Button>
                 </div>
-              ) : (
-                <Card>
-                  <CardContent className="flex flex-col items-center justify-center py-12">
-                    <HistoryIcon className="h-12 w-12 text-muted-foreground/50 mb-4" />
-                    <h3 className="text-lg font-medium mb-1">Henüz geçmiş yok</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Dashboard'dan ilk ürününüzü oluşturun</p>
-                    <Button asChild>
-                      <a href="/">Dashboard'a Git</a>
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
+      )}
       </div>
 
       <DetailModal />
